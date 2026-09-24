@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodOrder — Платформа заказа еды</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========== СВЕТЛАЯ ТЕМА ========== */
+        :root {
+            --bg: #f7f3ee;
+            --card-bg: #ffffff;
+            --primary: #e86a33;
+            --primary-hover: #d55a28;
+            --secondary: #2d3436;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #e0dcd5;
+            --success: #27ae60;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --input-bg: #fafafa;
+            --header-bg: #ffffff;
+            --overlay: rgba(0,0,0,0.45);
+            --cart-bg: #ffffff;
+            --badge-bg: #f0ede8;
+            --btn-secondary-bg: #f0ede8;
+            --btn-secondary-hover: #e5e1da;
+        }
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --primary: #ff8a5c;
+            --primary-hover: #ff6b3d;
+            --secondary: #f0f0f0;
+            --text: #f0f0f0;
+            --text-light: #b0b0b0;
+            --border: #444;
+            --success: #2ecc71;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+            --input-bg: #3a3a3a;
+            --header-bg: #2d2d2d;
+            --overlay: rgba(0,0,0,0.7);
+            --cart-bg: #2d2d2d;
+            --badge-bg: #3a3a3a;
+            --btn-secondary-bg: #3a3a3a;
+            --btn-secondary-hover: #444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .screen { display: none; min-height: 100vh; animation: fadeIn 0.4s ease; }
+        .screen.active { display: flex; flex-direction: column; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+        /* ========== WELCOME ========== */
+        #welcome-screen {
+            justify-content: center; align-items: center; padding: 20px;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--card-bg) 50%, var(--bg) 100%);
+        }
+        .welcome-container {
+            background: var(--card-bg); border-radius: var(--radius);
+            box-shadow: var(--shadow-lg); padding: 48px 40px;
+            max-width: 480px; width: 100%; text-align: center;
+            animation: popIn 0.5s ease; transition: background 0.3s;
+        }
+        .welcome-logo { font-size: 56px; margin-bottom: 16px; }
+        .welcome-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; color: var(--secondary); }
+        .welcome-subtitle { font-size: 15px; color: var(--text-light); margin-bottom: 32px; line-height: 1.5; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: var(--text); }
+        .form-input, .form-select {
+            width: 100%; padding: 14px 16px;
+            border: 2px solid var(--border); border-radius: var(--radius-sm);
+            font-size: 16px; font-family: inherit; transition: var(--transition);
+            background: var(--input-bg); color: var(--text); outline: none;
+        }
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary); background: var(--card-bg);
+            box-shadow: 0 0 0 4px rgba(232, 106, 51, 0.12);
+        }
+        .form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23636e72' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 28px; border: none; border-radius: var(--radius-sm);
+            font-size: 16px; font-weight: 700; font-family: inherit;
+            cursor: pointer; transition: var(--transition); text-decoration: none; width: 100%;
+        }
+        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 16px rgba(232, 106, 51, 0.35); }
+        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 6px 24px rgba(232, 106, 51, 0.45); transform: translateY(-2px); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-secondary { background: var(--btn-secondary-bg); color: var(--text); }
+        .btn-secondary:hover { background: var(--btn-secondary-hover); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: rgba(232, 106, 51, 0.08); }
+        .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; border-radius: 8px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+        /* ========== HEADER ========== */
+        .app-header {
+            background: var(--header-bg); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;
+            transition: background 0.3s;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-logo { font-size: 32px; }
+        .header-title { font-size: 20px; font-weight: 800; color: var(--secondary); }
+        .header-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .lang-select {
+            padding: 8px 12px; border: 2px solid var(--border); border-radius: 8px;
+            font-size: 13px; font-weight: 600; background: var(--input-bg); color: var(--text); cursor: pointer; outline: none;
+        }
+        .header-user { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--text-light); }
+        .user-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--primary); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 16px; text-transform: uppercase;
+        }
+        .cart-badge, .theme-toggle, .admin-toggle {
+            position: relative; cursor: pointer; background: var(--badge-bg);
+            border-radius: 50%; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; transition: var(--transition); border: 2px solid transparent;
+        }
+        .cart-badge:hover, .theme-toggle:hover, .admin-toggle:hover {
+            border-color: var(--primary); background: var(--card-bg);
+        }
+        .cart-count {
+            position: absolute; top: -4px; right: -4px;
+            background: var(--primary); color: #fff;
+            font-size: 11px; font-weight: 700; border-radius: 50%;
+            width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(232, 106, 51, 0.4);
+        }
+
+        /* ========== WEEK SELECTOR ========== */
+        .week-selector { display: flex; gap: 8px; background: var(--badge-bg); padding: 4px; border-radius: 12px; }
+        .week-btn {
+            padding: 8px 18px; border: none; border-radius: 9px;
+            font-size: 13px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: var(--transition);
+            background: transparent; color: var(--text-light); white-space: nowrap;
+        }
+        .week-btn.active { background: var(--card-bg); color: var(--text); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        .week-btn:hover:not(.active) { background: rgba(255, 255, 255, 0.5); color: var(--text); }
+
+        /* ========== DAY SELECTOR ========== */
+        .day-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+        .day-btn {
+            padding: 8px 14px; border: none; border-radius: 8px;
+            font-size: 13px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: var(--transition);
+            background: var(--badge-bg); color: var(--text-light);
+        }
+        .day-btn.active { background: var(--primary); color: #fff; }
+        .day-btn:hover:not(.active) { background: #d0d0d0; color: var(--text); }
+        .day-date { display: block; font-size: 10px; font-weight: 400; opacity: 0.8; }
+
+        /* ========== MENU ========== */
+        .menu-container { flex: 1; padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .menu-section-title {
+            font-size: 22px; font-weight: 700; margin-bottom: 16px;
+            color: var(--secondary); display: flex; align-items: center; gap: 8px;
+        }
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px; margin-bottom: 32px;
+        }
+        .dish-card {
+            background: var(--card-bg); border-radius: var(--radius); overflow: hidden;
+            box-shadow: var(--shadow); transition: var(--transition);
+            cursor: pointer; position: relative; animation: slideUp 0.5s ease;
+        }
+        .dish-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+        .dish-card.selected { border: 3px solid var(--primary); box-shadow: 0 8px 32px rgba(232, 106, 51, 0.25); }
+        .dish-card.selected::after {
+            content: '✓'; position: absolute; top: 12px; right: 12px;
+            background: var(--primary); color: #fff;
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 16px;
+            box-shadow: 0 4px 12px rgba(232, 106, 51, 0.4);
+        }
+        .dish-image { width: 100%; height: 180px; object-fit: cover; display: block; background: #e8e4de; }
+        .dish-info { padding: 16px 18px; }
+        .dish-name { font-size: 17px; font-weight: 700; margin-bottom: 6px; color: var(--secondary); }
+        .dish-desc {
+            font-size: 13px; color: var(--text-light); line-height: 1.5; margin-bottom: 10px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .dish-footer { display: flex; align-items: center; justify-content: space-between; }
+        .dish-price { font-size: 18px; font-weight: 800; color: var(--primary); }
+        .dish-weight { font-size: 13px; color: var(--text-light); }
+        .dish-category-badge {
+            font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+            background: var(--badge-bg); color: var(--primary); letter-spacing: 0.5px;
+        }
+        .dish-qty-controls { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .qty-btn {
+            width: 32px; height: 32px; border-radius: 8px;
+            border: 2px solid var(--border); background: var(--card-bg);
+            cursor: pointer; font-size: 16px; font-weight: 700; color: var(--text);
+            transition: var(--transition); display: flex; align-items: center; justify-content: center;
+        }
+        .qty-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .qty-value { font-weight: 700; font-size: 16px; min-width: 24px; text-align: center; }
+        .add-to-cart-btn {
+            margin-top: 10px; padding: 8px 16px;
+            background: var(--primary); color: #fff;
+            border: none; border-radius: 8px;
+            font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: var(--transition); width: 100%; font-family: inherit;
+        }
+        .add-to-cart-btn:hover { background: var(--primary-hover); }
+        .add-to-cart-btn.added { background: var(--success); }
+
+        /* ========== BUSINESS LUNCH ========== */
+        .business-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 2px dashed var(--border);
+        }
+        .business-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            animation: slideUp 0.5s ease;
+        }
+        .business-card:hover { box-shadow: var(--shadow-lg); }
+        .business-date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+        .business-date-selector label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+        .business-date-input {
+            flex: 1;
+            padding: 6px 8px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+        .business-date-input:focus { border-color: var(--primary); }
+
+        /* ========== CART PANEL ========== */
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--overlay); z-index: 200;
+            display: none; justify-content: flex-end; animation: fadeIn 0.3s ease;
+        }
+        .cart-overlay.open { display: flex; }
+        .cart-panel {
+            background: var(--cart-bg); width: 100%; max-width: 440px; height: 100%;
+            overflow-y: auto; padding: 24px;
+            box-shadow: -8px 0 40px rgba(0, 0, 0, 0.15);
+            animation: slideInRight 0.35s ease; transition: background 0.3s;
+        }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cart-title { font-size: 22px; font-weight: 800; }
+        .cart-close {
+            background: none; border: none; font-size: 28px; cursor: pointer;
+            color: var(--text-light); transition: var(--transition);
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .cart-close:hover { background: var(--badge-bg); color: var(--text); }
+        .cart-items { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .cart-item {
+            display: flex; gap: 12px; padding: 12px;
+            border-radius: var(--radius-sm); background: var(--input-bg); border: 1px solid var(--border);
+        }
+        .cart-item-img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+        .cart-item-price { font-weight: 600; color: var(--primary); font-size: 14px; }
+        .cart-item-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+        .cart-item-remove {
+            background: none; border: none; color: #e74c3c; cursor: pointer;
+            font-size: 18px; padding: 4px; transition: var(--transition); align-self: flex-start;
+        }
+        .cart-item-remove:hover { color: #c0392b; transform: scale(1.2); }
+        .cart-total {
+            font-size: 20px; font-weight: 800; text-align: right;
+            padding: 16px 0; border-top: 2px solid var(--border); color: var(--secondary);
+        }
+        .cart-empty { text-align: center; padding: 40px 20px; color: var(--text-light); }
+        .cart-empty-icon { font-size: 56px; margin-bottom: 16px; }
+
+        /* ========== CHECKOUT ========== */
+        .checkout-container { max-width: 600px; margin: 0 auto; padding: 24px; width: 100%; animation: slideUp 0.5s ease; }
+        .checkout-card {
+            background: var(--card-bg); border-radius: var(--radius);
+            box-shadow: var(--shadow-lg); padding: 32px; transition: background 0.3s;
+        }
+        .checkout-title { font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+        .payment-info {
+            background: var(--input-bg); border-radius: var(--radius-sm);
+            padding: 16px 20px; margin-bottom: 20px; line-height: 1.6; font-size: 15px;
+        }
+        .checkout-summary {
+            background: var(--input-bg); border-radius: var(--radius-sm);
+            padding: 16px 20px; margin-bottom: 20px;
+        }
+        .checkout-summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+        .checkout-summary-total {
+            display: flex; justify-content: space-between; padding: 12px 0;
+            font-weight: 800; font-size: 18px; border-top: 2px solid var(--border); margin-top: 8px;
+        }
+        .checkout-item-list { margin-top: 12px; font-size: 13px; color: var(--text-light); }
+        .checkout-item-list li { padding: 4px 0; list-style: none; }
+
+        /* ========== GLOBAL LANGUAGE SELECT ========== */
+        .global-lang-select { position: absolute; top: 16px; right: 16px; z-index: 10; }
+        .global-lang-select select {
+            padding: 8px 12px; border: 2px solid var(--border); border-radius: 8px;
+            font-size: 13px; font-weight: 600; background: var(--input-bg); color: var(--text); cursor: pointer;
+        }
+
+        /* ========== ADMIN ========== */
+        .admin-login-container { max-width: 420px; margin: 80px auto; padding: 24px; width: 100%; animation: slideUp 0.5s ease; }
+        .admin-panel-container { max-width: 900px; margin: 0 auto; padding: 24px; width: 100%; animation: slideUp 0.5s ease; }
+        .admin-card {
+            background: var(--card-bg); border-radius: var(--radius);
+            box-shadow: var(--shadow-lg); padding: 32px; transition: background 0.3s;
+        }
+        .admin-title { font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+        .admin-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .admin-form .full-width { grid-column: span 2; }
+        .admin-form .form-group { margin-bottom: 0; }
+        .admin-dish-list { margin-top: 16px; }
+        .admin-dish-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; border-bottom: 1px solid var(--border);
+        }
+        .admin-dish-item span { flex: 1; }
+        .admin-dish-item button { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 16px; }
+        .admin-dates-table { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
+        .admin-dates-table th, .admin-dates-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+        .admin-dates-table th { background: var(--input-bg); }
+        .admin-dates-table input { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--input-bg); color: var(--text); }
+        .image-upload-area { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .image-upload-area img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .image-upload-area input[type="file"] { display: none; }
+        .image-upload-label {
+            background: var(--btn-secondary-bg); color: var(--text);
+            padding: 8px 16px; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-size: 13px; transition: var(--transition);
+        }
+        .image-upload-label:hover { background: var(--btn-secondary-hover); }
+
+        /* ========== SUCCESS ========== */
+        .success-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 24px; text-align: center;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--card-bg) 100%); position: relative;
+        }
+        .success-icon { font-size: 80px; margin-bottom: 20px; animation: popIn 0.6s ease; }
+        .success-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+        .success-message { font-size: 16px; color: var(--text-light); margin-bottom: 24px; max-width: 400px; line-height: 1.6; }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--secondary); color: var(--bg);
+            padding: 14px 24px; border-radius: 12px;
+            font-weight: 600; font-size: 14px; z-index: 500;
+            opacity: 0; transition: all 0.4s ease; pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .welcome-container, .admin-card { padding: 28px 20px; }
+            .menu-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+            .app-header { padding: 10px 16px; }
+            .header-title { font-size: 16px; }
+            .menu-container { padding: 16px; }
+            .checkout-card, .admin-card { padding: 20px; }
+            .admin-form { grid-template-columns: 1fr; }
+            .admin-form .full-width { grid-column: span 1; }
+            .cart-panel { max-width: 100%; padding: 16px; }
+            .week-selector { gap: 4px; }
+            .week-btn { padding: 6px 12px; font-size: 11px; }
+            .day-btn { padding: 6px 10px; font-size: 11px; }
+        }
+        @media (max-width: 480px) {
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== WELCOME SCREEN ==================== -->
+    <div class="screen active" id="welcome-screen">
+        <div class="welcome-container">
+            <div class="welcome-logo">🍽️</div>
+            <h1 class="welcome-title" data-i18n="welcome_title">Добро пожаловать!</h1>
+            <p class="welcome-subtitle" data-i18n="welcome_subtitle">Закажите вкусную еду на эту или следующую неделю</p>
+            <form id="welcome-form">
+                <div class="form-group">
+                    <label data-i18n="your_name">Ваше имя</label>
+                    <input type="text" class="form-input" id="user-name-input" placeholder="Иван Петров" required minlength="2" data-i18n-placeholder="name_placeholder">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="language">Язык / Idioma</label>
+                    <select class="form-select" id="language-select">
+                        <option value="ru">🇷🇺 Русский</option>
+                        <option value="es">🇪🇸 Español</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" data-i18n="continue">Продолжить →</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN APP ==================== -->
+    <div class="screen" id="main-screen">
+        <header class="app-header">
+            <div class="header-left">
+                <span class="header-logo">🍽️</span>
+                <span class="header-title">FoodOrder</span>
+            </div>
+            <div class="header-controls">
+                <div class="week-selector" id="week-selector">
+                    <button class="week-btn active" data-week="this" data-i18n="this_week">Эта неделя</button>
+                    <button class="week-btn" data-week="next" data-i18n="next_week">Следующая неделя</button>
+                </div>
+                <select class="lang-select" id="header-lang-select">
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+                <div class="header-user">
+                    <span id="header-user-name"></span>
+                    <div class="user-avatar" id="header-avatar">U</div>
+                    <button class="theme-toggle" id="theme-toggle" title="Переключить тему">🌓</button>
+                    <button class="admin-toggle" id="admin-toggle" title="Админ-панель">⚙️</button>
+                    <div class="cart-badge" id="cart-badge" title="Корзина">
+                        🛒
+                        <span class="cart-count" id="cart-count-badge">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="menu-container">
+            <h2 class="menu-section-title" data-i18n="menu_title">🍲 Меню на неделю</h2>
+            <div class="day-selector" id="day-selector"></div>
+            <div class="menu-grid" id="menu-grid"></div>
+
+            <section class="business-section">
+                <h2 class="menu-section-title" data-i18n="business_title">🍱 Бизнес-ланчи (постоянные блюда)</h2>
+                <p style="color: var(--text-light); margin-bottom: 16px; font-size: 14px;" data-i18n="business_subtitle">Выберите блюдо и укажите желаемую дату</p>
+                <div class="menu-grid" id="business-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ==================== ADMIN LOGIN ==================== -->
+    <div class="screen" id="admin-login-screen">
+        <div class="global-lang-select">
+            <select id="admin-login-lang-select">
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="es">🇪🇸 Español</option>
+            </select>
+        </div>
+        <main class="admin-login-container">
+            <div class="admin-card">
+                <h2 class="admin-title" data-i18n="admin_login_title">🔐 Вход для администратора</h2>
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label data-i18n="username">Логин</label>
+                        <input type="text" class="form-input" id="admin-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="password">Пароль</label>
+                        <input type="password" class="form-input" id="admin-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="login_btn">Войти</button>
+                    <button type="button" class="btn btn-secondary" id="admin-login-back" style="margin-top:10px;" data-i18n="back_to_menu">← Назад в меню</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== ADMIN PANEL ==================== -->
+    <div class="screen" id="admin-screen">
+        <div class="global-lang-select">
+            <select id="admin-panel-lang-select">
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="es">🇪🇸 Español</option>
+            </select>
+        </div>
+        <main class="admin-panel-container">
+            <div class="admin-card">
+                <h2 class="admin-title" data-i18n="admin_title">⚙️ Панель администратора</h2>
+
+                <h3 style="margin-bottom:12px;" data-i18n="dates_title">Даты для дней недели</h3>
+                <table class="admin-dates-table" id="admin-dates-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="day">День</th>
+                            <th data-i18n="this_week">Эта неделя</th>
+                            <th data-i18n="next_week">Следующая неделя</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <hr style="border-color: var(--border); margin: 20px 0;">
+
+                <h3 style="margin-bottom:12px;" data-i18n="add_dish">Добавить блюдо</h3>
+                <form class="admin-form" id="admin-dish-form">
+                    <div class="form-group">
+                        <label data-i18n="dish_name_ru">Название (рус.)</label>
+                        <input type="text" class="form-input" id="admin-name-ru" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="dish_name_es">Название (исп.)</label>
+                        <input type="text" class="form-input" id="admin-name-es" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="dish_desc_ru">Описание (рус.)</label>
+                        <textarea class="form-input" id="admin-desc-ru" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="dish_desc_es">Описание (исп.)</label>
+                        <textarea class="form-input" id="admin-desc-es" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="price">Цена (MXN)</label>
+                        <input type="number" class="form-input" id="admin-price" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="weight">Вес (г)</label>
+                        <input type="number" class="form-input" id="admin-weight" min="1" value="200" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="category">Категория</label>
+                        <input type="text" class="form-input" id="admin-category" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="type">Тип блюда</label>
+                        <select class="form-select" id="admin-type">
+                            <option value="weekly" data-i18n="type_weekly">Меню на день</option>
+                            <option value="business" data-i18n="type_business">Бизнес-ланч</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="admin-week-group">
+                        <label data-i18n="week">Неделя</label>
+                        <select class="form-select" id="admin-week">
+                            <option value="this" data-i18n="this_week">Эта неделя</option>
+                            <option value="next" data-i18n="next_week">Следующая неделя</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="admin-day-group">
+                        <label data-i18n="day">День недели</label>
+                        <select class="form-select" id="admin-day">
+                            <option value="monday" data-i18n="monday">Понедельник</option>
+                            <option value="tuesday" data-i18n="tuesday">Вторник</option>
+                            <option value="wednesday" data-i18n="wednesday">Среда</option>
+                            <option value="thursday" data-i18n="thursday">Четверг</option>
+                            <option value="friday" data-i18n="friday">Пятница</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="image_url">Изображение (URL или загрузка — необязательно)</label>
+                        <input type="url" class="form-input" id="admin-image" placeholder="https://...">
+                        <div class="image-upload-area" style="margin-top:8px;">
+                            <label for="admin-image-file" class="image-upload-label" data-i18n="upload_image">Загрузить с устройства</label>
+                            <input type="file" id="admin-image-file" accept="image/*">
+                            <img id="admin-image-preview" src="" alt="Превью" style="display:none;">
+                            <button type="button" id="admin-image-clear" class="btn btn-sm btn-secondary" style="display:none;" data-i18n="clear">Очистить</button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex; align-items:flex-end;">
+                        <button type="submit" class="btn btn-primary" data-i18n="add_dish">Добавить блюдо</button>
+                    </div>
+                </form>
+                <hr style="border-color: var(--border); margin: 20px 0;">
+                <h3 style="margin-bottom:12px;" data-i18n="existing_dishes">Существующие блюда</h3>
+                <div class="admin-dish-list" id="admin-dish-list"></div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn btn-secondary" id="back-to-menu-btn" data-i18n="back_to_menu">← Назад в меню</button>
+                    <button class="btn btn-outline" id="admin-logout-btn" data-i18n="logout">Выйти</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== CART ==================== -->
+    <div class="cart-overlay" id="cart-overlay">
+        <div class="cart-panel">
+            <div class="cart-header">
+                <span class="cart-title" data-i18n="cart_title">🛒 Корзина</span>
+                <button class="cart-close" id="cart-close-btn">✕</button>
+            </div>
+            <div class="cart-items" id="cart-items"></div>
+            <div class="cart-total" id="cart-total">Итого: 0 $</div>
+            <button class="btn btn-primary" id="checkout-btn" data-i18n="checkout">Оформить заказ →</button>
+        </div>
+    </div>
+
+    <!-- ==================== CHECKOUT ==================== -->
+    <div class="screen" id="checkout-screen">
+        <div class="global-lang-select">
+            <select id="checkout-lang-select">
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="es">🇪🇸 Español</option>
+            </select>
+        </div>
+        <main class="checkout-container">
+            <div class="checkout-card">
+                <h2 class="checkout-title" data-i18n="checkout_title">💳 Оплата заказа</h2>
+                <div class="checkout-summary">
+                    <div class="checkout-summary-row">
+                        <span data-i18n="order_for">Заказ для:</span>
+                        <strong id="checkout-user-name"></strong>
+                    </div>
+                    <div class="checkout-summary-row">
+                        <span data-i18n="order_number">Номер заказа:</span>
+                        <strong id="checkout-order-number">—</strong>
+                    </div>
+                    <div class="checkout-summary-row">
+                        <span data-i18n="items_count">Количество блюд:</span>
+                        <strong id="checkout-items-count"></strong>
+                    </div>
+                    <div class="checkout-summary-total">
+                        <span data-i18n="total_amount">Итого к оплате:</span>
+                        <strong id="checkout-total-amount"></strong>
+                    </div>
+                    <div style="margin-top:14px;">
+                        <strong style="font-size:14px;" data-i18n="order_details">Состав заказа:</strong>
+                        <ul class="checkout-item-list" id="checkout-item-list"></ul>
+                    </div>
+                </div>
+
+                <div class="payment-info" id="payment-info"></div>
+
+                <button class="btn btn-primary" id="confirm-payment-btn" data-i18n="confirm_payment">Подтвердить оплату</button>
+                <button class="btn btn-secondary" id="back-to-cart-btn" style="margin-top:10px;" data-i18n="back_to_cart">← Назад в корзину</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== SUCCESS ==================== -->
+    <div class="screen" id="success-screen">
+        <div class="global-lang-select">
+            <select id="success-lang-select">
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="es">🇪🇸 Español</option>
+            </select>
+        </div>
+        <div class="success-container">
+            <div class="success-icon">🎉</div>
+            <h1 class="success-title" data-i18n="success_title">Заказ оформлен!</h1>
+            <p class="success-message" data-i18n="success_message">Спасибо за ваш заказ. Данные успешно отправлены.</p>
+            <button class="btn btn-primary" style="max-width:280px;" id="new-order-btn" data-i18n="new_order">Сделать новый заказ</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ===================================================================
+        // ==================== КОНСТАНТЫ ====================
+        // ===================================================================
+        const API_BASE = '/.netlify/functions';
+        const BENEFICIARY_NAME = 'Mariia Orekhova Andreevna';
+        const CLABE_NUMBER = '706969731680035714';
+        const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        const CURRENCY_SYMBOL = '$';
+        const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x300?text=Food';
+
+        // ===================================================================
+        // ==================== ПЕРЕВОДЫ ====================
+        // ===================================================================
+        const translations = {
+            ru: {
+                welcome_title: 'Добро пожаловать!',
+                welcome_subtitle: 'Закажите вкусную еду на эту или следующую неделю',
+                your_name: 'Ваше имя',
+                language: 'Язык / Idioma',
+                name_placeholder: 'Иван Петров',
+                continue: 'Продолжить →',
+                this_week: 'Эта неделя',
+                next_week: 'Следующая неделя',
+                menu_title: '🍲 Меню на неделю',
+                business_title: '🍱 Бизнес-ланчи (постоянные блюда)',
+                business_subtitle: 'Выберите блюдо и укажите желаемую дату',
+                cart_title: '🛒 Корзина',
+                checkout: 'Оформить заказ →',
+                checkout_title: '💳 Оплата заказа',
+                order_for: 'Заказ для:',
+                order_number: 'Номер заказа:',
+                order_details: 'Состав заказа:',
+                items_count: 'Количество блюд:',
+                total_amount: 'Итого к оплате:',
+                confirm_payment: 'Подтвердить оплату',
+                back_to_cart: '← Назад в корзину',
+                success_title: 'Заказ оформлен!',
+                success_message: 'Спасибо за ваш заказ. Данные успешно отправлены.',
+                new_order: 'Сделать новый заказ',
+                cart_empty: 'Корзина пуста.',
+                cart_item_added: 'Товар добавлен',
+                add_to_cart: 'Добавить',
+                total: 'Итого',
+                toast_order_sent: '📤 Заказ отправлен!',
+                toast_order_error: '⚠️ Ошибка отправки.',
+                remove: 'Удалить',
+                admin_title: '⚙️ Панель администратора',
+                dish_name_ru: 'Название (рус.)',
+                dish_name_es: 'Название (исп.)',
+                dish_desc_ru: 'Описание (рус.)',
+                dish_desc_es: 'Описание (исп.)',
+                price: 'Цена (MXN)',
+                weight: 'Вес (г)',
+                category: 'Категория',
+                type: 'Тип блюда',
+                type_weekly: 'Меню на день',
+                type_business: 'Бизнес-ланч',
+                image_url: 'Изображение (URL или загрузка — необязательно)',
+                upload_image: 'Загрузить с устройства',
+                clear: 'Очистить',
+                week: 'Неделя',
+                day: 'День недели',
+                add_dish: 'Добавить блюдо',
+                existing_dishes: 'Существующие блюда',
+                back_to_menu: '← Назад в меню',
+                delete: 'Удалить',
+                admin_login_title: '🔐 Вход для администратора',
+                username: 'Логин',
+                password: 'Пароль',
+                login_btn: 'Войти',
+                logout: 'Выйти',
+                invalid_credentials: '❌ Неверный логин или пароль',
+                monday: 'Понедельник',
+                tuesday: 'Вторник',
+                wednesday: 'Среда',
+                thursday: 'Четверг',
+                friday: 'Пятница',
+                payment_instruction: 'Для оплаты заказа сделайте перевод по следующим реквизитам:',
+                payment_comment: 'Обязательно укажите номер заказа в комментарии к платежу:',
+                dates_title: 'Даты для дней недели',
+                copy_clabe: 'CLABE скопирован',
+                copy_fail: 'Не удалось скопировать',
+                business_date: 'Дата:',
+                fill_required: '⚠️ Заполните все обязательные поля',
+                loading: 'Загрузка...',
+                server_error: 'Ошибка сервера',
+            },
+            es: {
+                welcome_title: '¡Bienvenido!',
+                welcome_subtitle: 'Pide comida deliciosa para esta o la próxima semana',
+                your_name: 'Tu nombre',
+                language: 'Idioma / Язык',
+                name_placeholder: 'Juan Pérez',
+                continue: 'Continuar →',
+                this_week: 'Esta semana',
+                next_week: 'Próxima semana',
+                menu_title: '🍲 Menú de la semana',
+                business_title: '🍱 Almuerzos ejecutivos (platos fijos)',
+                business_subtitle: 'Elige un plato e indica la fecha deseada',
+                cart_title: '🛒 Carrito',
+                checkout: 'Pagar →',
+                checkout_title: '💳 Pago del pedido',
+                order_for: 'Pedido para:',
+                order_number: 'Número de pedido:',
+                order_details: 'Detalle del pedido:',
+                items_count: 'Número de platos:',
+                total_amount: 'Total a pagar:',
+                confirm_payment: 'Confirmar pago',
+                back_to_cart: '← Volver al carrito',
+                success_title: '¡Pedido realizado!',
+                success_message: 'Gracias por tu pedido.',
+                new_order: 'Hacer nuevo pedido',
+                cart_empty: 'El carrito está vacío.',
+                cart_item_added: 'Artículo añadido',
+                add_to_cart: 'Añadir',
+                total: 'Total',
+                toast_order_sent: '📤 ¡Pedido enviado!',
+                toast_order_error: '⚠️ Error de envío.',
+                remove: 'Eliminar',
+                admin_title: '⚙️ Panel de administrador',
+                dish_name_ru: 'Nombre (ruso)',
+                dish_name_es: 'Nombre (español)',
+                dish_desc_ru: 'Descripción (ruso)',
+                dish_desc_es: 'Descripción (español)',
+                price: 'Precio (MXN)',
+                weight: 'Peso (g)',
+                category: 'Categoría',
+                type: 'Tipo de plato',
+                type_weekly: 'Menú del día',
+                type_business: 'Almuerzo ejecutivo',
+                image_url: 'Imagen (URL o subir — opcional)',
+                upload_image: 'Subir desde dispositivo',
+                clear: 'Limpiar',
+                week: 'Semana',
+                day: 'Día de la semana',
+                add_dish: 'Añadir plato',
+                existing_dishes: 'Platos existentes',
+                back_to_menu: '← Volver al menú',
+                delete: 'Eliminar',
+                admin_login_title: '🔐 Acceso de administrador',
+                username: 'Usuario',
+                password: 'Contraseña',
+                login_btn: 'Iniciar sesión',
+                logout: 'Cerrar sesión',
+                invalid_credentials: '❌ Usuario o contraseña incorrectos',
+                monday: 'Lunes',
+                tuesday: 'Martes',
+                wednesday: 'Miércoles',
+                thursday: 'Jueves',
+                friday: 'Viernes',
+                payment_instruction: 'Para pagar el pedido, realice una transferencia con los siguientes datos:',
+                payment_comment: 'Asegúrese de indicar el número de pedido en el comentario:',
+                dates_title: 'Fechas para días de la semana',
+                copy_clabe: 'CLABE copiado',
+                copy_fail: 'No se pudo copiar',
+                business_date: 'Fecha:',
+                fill_required: '⚠️ Complete todos los campos obligatorios',
+                loading: 'Cargando...',
+                server_error: 'Error del servidor',
+            }
+        };
+
+        // ===================================================================
+        // ==================== СОСТОЯНИЕ ====================
+        // ===================================================================
+        let menuData = {
+            this: { weekLabel: { ru: 'Эта неделя', es: 'Esta semana' }, days: {} },
+            next: { weekLabel: { ru: 'Следующая неделя', es: 'Próxima semana' }, days: {} },
+            business: []
+        };
+
+        DAYS.forEach(day => {
+            menuData.this.days[day] = { label: { ru: translations.ru[day], es: translations.es[day] }, date: '', dishes: [] };
+            menuData.next.days[day] = { label: { ru: translations.ru[day], es: translations.es[day] }, date: '', dishes: [] };
+        });
+
+        const state = {
+            userName: '',
+            language: 'ru',
+            selectedWeek: 'this',
+            selectedDay: 'monday',
+            cart: {},
+            cartOpen: false,
+            theme: localStorage.getItem('theme') || 'light',
+            isAdminLoggedIn: sessionStorage.getItem('adminToken') ? true : false,
+            uploadedImageData: null,
+        };
+
+        const $ = (sel) => document.querySelector(sel);
+        const screens = {
+            welcome: $('#welcome-screen'),
+            main: $('#main-screen'),
+            adminLogin: $('#admin-login-screen'),
+            admin: $('#admin-screen'),
+            checkout: $('#checkout-screen'),
+            success: $('#success-screen'),
+        };
+
+        // ===================================================================
+        // ==================== I18N ====================
+        // ===================================================================
+        function t(key) { return translations[state.language][key] || key; }
+
+        function setLanguage(lang) {
+            state.language = lang;
+            applyTranslations();
+            document.querySelectorAll('select[id$="-lang-select"], #language-select, #header-lang-select').forEach(sel => {
+                sel.value = lang;
+            });
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.getAttribute('data-i18n'));
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+            });
+            updateUserHeader();
+            renderDaySelector();
+            renderMenu();
+            renderBusinessMenu();
+            renderCart();
+            updateCheckoutSummary();
+            renderAdminDatesTable();
+            renderAdminDishList();
+        }
+
+        function updateUserHeader() {
+            if (state.userName) {
+                $('#header-user-name').textContent = state.userName;
+                $('#header-avatar').textContent = state.userName.charAt(0).toUpperCase();
+            }
+        }
+
+        // ===================================================================
+        // ==================== ТЕМА ====================
+        // ===================================================================
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            localStorage.setItem('theme', state.theme);
+            $('#theme-toggle').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            applyTheme();
+        }
+
+        // ===================================================================
+        // ==================== НАВИГАЦИЯ ====================
+        // ===================================================================
+        function showScreen(screenId) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[screenId].classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===================================================================
+        // ==================== API ====================
+        // ===================================================================
+        async function loadMenuFromServer() {
+            try {
+                const res = await fetch(`${API_BASE}/get-menu`);
+                if (!res.ok) throw new Error('Server error');
+                const { dishes, weekDates } = await res.json();
+
+                menuData = {
+                    this: { weekLabel: { ru: 'Эта неделя', es: 'Esta semana' }, days: {} },
+                    next: { weekLabel: { ru: 'Следующая неделя', es: 'Próxima semana' }, days: {} },
+                    business: []
+                };
+                DAYS.forEach(day => {
+                    menuData.this.days[day] = { label: { ru: translations.ru[day], es: translations.es[day] }, date: '', dishes: [] };
+                    menuData.next.days[day] = { label: { ru: translations.ru[day], es: translations.es[day] }, date: '', dishes: [] };
+                });
+
+                weekDates.forEach(wd => {
+                    if (menuData[wd.week]?.days[wd.day]) menuData[wd.week].days[wd.day].date = wd.date_value;
+                });
+
+                dishes.forEach(d => {
+                    const dish = {
+                        id: d.id,
+                        name: { ru: d.name_ru, es: d.name_es },
+                        desc: { ru: d.desc_ru, es: d.desc_es },
+                        price: Number(d.price),
+                        weight: d.weight,
+                        category: { ru: d.category_ru, es: d.category_es },
+                        image: d.image_url || '',
+                        imageData: null
+                    };
+                    if (d.type === 'weekly' && d.week && d.day) menuData[d.week].days[d.day].dishes.push(dish);
+                    else if (d.type === 'business') menuData.business.push(dish);
+                });
+            } catch (err) {
+                console.error('Ошибка загрузки меню:', err);
+                showToast(t('server_error'));
+            }
+        }
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            const username = $('#admin-username').value.trim();
+            const password = $('#admin-password').value.trim();
+
+            try {
+                const res = await fetch(`${API_BASE}/admin-login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (!res.ok) { showToast(t('invalid_credentials')); return; }
+                const { token } = await res.json();
+                sessionStorage.setItem('adminToken', token);
+                state.isAdminLoggedIn = true;
+                showToast('✅ ' + t('admin_login_title'));
+                openAdminPanel();
+                $('#admin-username').value = '';
+                $('#admin-password').value = '';
+            } catch {
+                showToast(t('invalid_credentials'));
+            }
+        }
+
+        async function saveDishToServer(payload) {
+            const token = sessionStorage.getItem('adminToken');
+            const res = await fetch(`${API_BASE}/save-dish`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error('Save failed');
+            return res.json();
+        }
+
+        async function deleteDishOnServer(id) {
+            const token = sessionStorage.getItem('adminToken');
+            await fetch(`${API_BASE}/delete-dish?id=${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+        }
+
+        async function saveDateToServer(week, day, date_value) {
+            const token = sessionStorage.getItem('adminToken');
+            await fetch(`${API_BASE}/save-date`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ week, day, date_value })
+            });
+        }
+
+        async function sendOrderToServer(orderData) {
+            try {
+                const res = await fetch(`${API_BASE}/create-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                if (!res.ok) throw new Error('Server error');
+                return await res.json();
+            } catch (err) {
+                console.error('Ошибка создания заказа:', err);
+                return null;
+            }
+        }
+
+        // ===================================================================
+        // ==================== DAY SELECTOR ====================
+        // ===================================================================
+        function renderDaySelector() {
+            const container = $('#day-selector');
+            container.innerHTML = '';
+            DAYS.forEach(day => {
+                const dayData = menuData[state.selectedWeek].days[day];
+                const btn = document.createElement('button');
+                btn.className = `day-btn ${day === state.selectedDay ? 'active' : ''}`;
+                btn.dataset.day = day;
+                const label = dayData.label[state.language];
+                const date = dayData.date || '';
+                btn.innerHTML = `${label} <span class="day-date">${date}</span>`;
+                btn.addEventListener('click', () => {
+                    if (day !== state.selectedDay) {
+                        state.selectedDay = day;
+                        renderDaySelector();
+                        renderMenu();
+                    }
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        // ===================================================================
+        // ==================== МЕНЮ ====================
+        // ===================================================================
+        function renderMenu() {
+            const grid = $('#menu-grid');
+            const dishes = menuData[state.selectedWeek].days[state.selectedDay].dishes || [];
+            const lang = state.language;
+
+            grid.innerHTML = '';
+            dishes.forEach(dish => {
+                const cartKey = `${state.selectedWeek}_${state.selectedDay}_${dish.id}`;
+                const inCart = state.cart[cartKey];
+                const qty = inCart ? inCart.qty : 0;
+
+                const card = document.createElement('div');
+                card.className = 'dish-card' + (qty > 0 ? ' selected' : '');
+                const imgSrc = dish.imageData || dish.image || PLACEHOLDER_IMAGE;
+
+                card.innerHTML = `
+                    <img class="dish-image" src="${imgSrc}" alt="${dish.name[lang]}" 
+                         onerror="this.src='${PLACEHOLDER_IMAGE}'" loading="lazy">
+                    <div class="dish-info">
+                        <span class="dish-category-badge">${dish.category[lang]}</span>
+                        <h3 class="dish-name" style="margin-top:8px;">${dish.name[lang]}</h3>
+                        <p class="dish-desc">${dish.desc[lang]}</p>
+                        <div class="dish-footer">
+                            <span class="dish-price">${dish.price} ${CURRENCY_SYMBOL}</span>
+                            <span class="dish-weight">${dish.weight} г</span>
+                        </div>
+                        <div class="dish-qty-controls">
+                            <button class="qty-btn qty-minus" data-cart-key="${cartKey}" ${qty === 0 ? 'disabled style="opacity:0.3"' : ''}>−</button>
+                            <span class="qty-value">${qty}</span>
+                            <button class="qty-btn qty-plus" data-cart-key="${cartKey}">+</button>
+                        </div>
+                        <button class="add-to-cart-btn ${qty > 0 ? 'added' : ''}" data-cart-key="${cartKey}">
+                            ${qty > 0 ? '✓ ' + t('cart_item_added') : t('add_to_cart')}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            updateCartBadge();
+        }
+
+        function renderBusinessMenu() {
+            const grid = $('#business-grid');
+            const lang = state.language;
+            grid.innerHTML = '';
+
+            if (!menuData.business) menuData.business = [];
+
+            menuData.business.forEach(dish => {
+                const card = document.createElement('div');
+                card.className = 'business-card';
+                card.dataset.dishId = dish.id;
+                const imgSrc = dish.imageData || dish.image || PLACEHOLDER_IMAGE;
+
+                let totalQty = 0;
+                Object.values(state.cart).forEach(item => {
+                    if (item.dish.id === dish.id && item.sourceType === 'business') totalQty += item.qty;
+                });
+
+                const defaultDate = new Date().toISOString().split('T')[0];
+
+                card.innerHTML = `
+                    <img class="dish-image" src="${imgSrc}" alt="${dish.name[lang]}" 
+                         onerror="this.src='${PLACEHOLDER_IMAGE}'" loading="lazy">
+                    <div class="dish-info">
+                        <span class="dish-category-badge">${dish.category[lang]}</span>
+                        <h3 class="dish-name" style="margin-top:8px;">${dish.name[lang]}</h3>
+                        <p class="dish-desc">${dish.desc[lang]}</p>
+                        <div class="dish-footer">
+                            <span class="dish-price">${dish.price} ${CURRENCY_SYMBOL}</span>
+                            <span class="dish-weight">${dish.weight} г</span>
+                        </div>
+                        <div class="business-date-selector">
+                            <label>${t('business_date')}</label>
+                            <input type="date" class="business-date-input" data-dish-id="${dish.id}" value="${defaultDate}" min="${defaultDate}">
+                        </div>
+                        <div class="dish-qty-controls">
+                            <button class="qty-btn business-qty-minus" data-dish-id="${dish.id}" ${totalQty === 0 ? 'disabled style="opacity:0.3"' : ''}>−</button>
+                            <span class="qty-value" id="business-qty-${dish.id}">${totalQty}</span>
+                            <button class="qty-btn business-qty-plus" data-dish-id="${dish.id}">+</button>
+                        </div>
+                        <button class="add-to-cart-btn ${totalQty > 0 ? 'added' : ''}" data-dish-id="${dish.id}" data-type="business">
+                            ${totalQty > 0 ? '✓ ' + t('cart_item_added') : t('add_to_cart')}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateCartBadge() {
+            const count = Object.values(state.cart).reduce((sum, item) => sum + item.qty, 0);
+            $('#cart-count-badge').textContent = count;
+        }
+
+        // ===================================================================
+        // ==================== КОРЗИНА ====================
+        // ===================================================================
+        function renderCart() {
+            const container = $('#cart-items');
+            const cartItems = Object.entries(state.cart);
+            const lang = state.language;
+
+            if (cartItems.length === 0) {
+                container.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <p>${t('cart_empty')}</p>
+                    </div>
+                `;
+                $('#cart-total').textContent = `${t('total')}: 0 ${CURRENCY_SYMBOL}`;
+                return;
+            }
+
+            container.innerHTML = '';
+            let total = 0;
+
+            cartItems.forEach(([key, item]) => {
+                const dish = item.dish;
+                const subtotal = dish.price * item.qty;
+                total += subtotal;
+                const imgSrc = dish.imageData || dish.image || PLACEHOLDER_IMAGE;
+                let meta = '';
+                if (item.sourceType === 'business') {
+                    meta = `<div class="cart-item-meta">📅 ${item.orderDate || '—'}</div>`;
+                } else {
+                    meta = `<div class="cart-item-meta">📅 ${item.dayLabel || ''} • ${item.date || ''}</div>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <img class="cart-item-img" src="${imgSrc}" alt="${dish.name[lang]}" 
+                         onerror="this.src='${PLACEHOLDER_IMAGE}'">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${dish.name[lang]}</div>
+                        <div class="cart-item-price">${dish.price} ${CURRENCY_SYMBOL} × ${item.qty} = ${subtotal} ${CURRENCY_SYMBOL}</div>
+                        ${meta}
+                        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+                            <button class="qty-btn" style="width:28px;height:28px;font-size:13px;" 
+                                    onclick="changeQty('${key}', -1)">−</button>
+                            <span style="font-weight:600;font-size:14px;">${item.qty}</span>
+                            <button class="qty-btn" style="width:28px;height:28px;font-size:13px;" 
+                                    onclick="changeQty('${key}', 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="cart-item-remove" onclick="removeFromCart('${key}')" title="${t('remove')}">🗑️</button>
+                `;
+                container.appendChild(div);
+            });
+
+            $('#cart-total').textContent = `${t('total')}: ${total} ${CURRENCY_SYMBOL}`;
+        }
+
+        function changeQty(cartKey, delta) {
+            if (!state.cart[cartKey]) return;
+            const newQty = state.cart[cartKey].qty + delta;
+            if (newQty <= 0) {
+                delete state.cart[cartKey];
+            } else {
+                state.cart[cartKey].qty = newQty;
+            }
+            renderMenu();
+            renderBusinessMenu();
+            renderCart();
+            updateCartBadge();
+        }
+
+        function removeFromCart(cartKey) {
+            delete state.cart[cartKey];
+            renderMenu();
+            renderBusinessMenu();
+            renderCart();
+            updateCartBadge();
+        }
+
+        function addWeeklyToCart(week, day, dishId, qty = 1) {
+            const dish = menuData[week].days[day].dishes.find(d => d.id === dishId);
+            if (!dish) return;
+            const cartKey = `${week}_${day}_${dishId}`;
+            const dayData = menuData[week].days[day];
+
+            if (state.cart[cartKey]) {
+                state.cart[cartKey].qty += qty;
+            } else {
+                state.cart[cartKey] = {
+                    dish, qty,
+                    sourceType: 'weekly',
+                    week, day,
+                    dayLabel: dayData.label[state.language],
+                    date: dayData.date || ''
+                };
+            }
+
+            renderMenu();
+            renderCart();
+            updateCartBadge();
+            showToast(t('cart_item_added'));
+        }
+
+        function addBusinessToCart(dishId, date, qty = 1) {
+            const dish = menuData.business.find(d => d.id === dishId);
+            if (!dish) return;
+            if (!date) {
+                showToast('⚠️ Выберите дату');
+                return;
+            }
+            const cartKey = `business_${dishId}_${date}`;
+
+            if (state.cart[cartKey]) {
+                state.cart[cartKey].qty += qty;
+            } else {
+                state.cart[cartKey] = {
+                    dish, qty,
+                    sourceType: 'business',
+                    orderDate: date
+                };
+            }
+
+            renderBusinessMenu();
+            renderCart();
+            updateCartBadge();
+            showToast(t('cart_item_added'));
+        }
+
+        function openCart() {
+            $('#cart-overlay').classList.add('open');
+            renderCart();
+        }
+        function closeCart() {
+            $('#cart-overlay').classList.remove('open');
+        }
+
+        // ===================================================================
+        // ==================== CHECKOUT ====================
+        // ===================================================================
+        function openCheckout() {
+            if (Object.keys(state.cart).length === 0) {
+                showToast(t('cart_empty'));
+                return;
+            }
+            closeCart();
+            updateCheckoutSummary();
+            showScreen('checkout');
+        }
+
+        function updateCheckoutSummary() {
+            const lang = state.language;
+            const cartItems = Object.values(state.cart);
+            const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
+            const totalAmount = cartItems.reduce((sum, item) => sum + item.dish.price * item.qty, 0);
+
+            $('#checkout-user-name').textContent = state.userName;
+            $('#checkout-items-count').textContent = totalItems;
+            $('#checkout-total-amount').textContent = `${totalAmount} ${CURRENCY_SYMBOL}`;
+
+            const list = $('#checkout-item-list');
+            list.innerHTML = '';
+            Object.values(state.cart).forEach(item => {
+                const li = document.createElement('li');
+                let meta = '';
+                if (item.sourceType === 'business') {
+                    meta = `— 📅 ${item.orderDate}`;
+                } else {
+                    meta = `— ${item.dayLabel}, ${item.date}`;
+                }
+                li.textContent = `• ${item.dish.name[lang]} × ${item.qty} ${meta}`;
+                list.appendChild(li);
+            });
+
+            const paymentInfo = $('#payment-info');
+            paymentInfo.innerHTML = `
+                <p>${t('payment_instruction')}</p>
+                <p><strong>Beneficiary name:</strong> ${BENEFICIARY_NAME}</p>
+                <p><strong>CLABE:</strong> 
+                    <span id="clabe-number">${CLABE_NUMBER}</span>
+                    <button id="copy-clabe-btn" class="btn btn-sm btn-secondary" style="width:auto; padding:4px 8px; font-size:12px;">📋</button>
+                </p>
+                <p>${t('payment_comment')}</p>
+                <p style="font-weight:700;font-size:18px;" id="payment-order-number">—</p>
+            `;
+        }
+
+        // ===================================================================
+        // ==================== ADMIN ====================
+        // ===================================================================
+        function openAdminPanel() {
+            renderAdminDatesTable();
+            renderAdminDishList();
+            showScreen('admin');
+        }
+
+        function renderAdminDatesTable() {
+            const tbody = document.querySelector('#admin-dates-table tbody');
+            tbody.innerHTML = '';
+            DAYS.forEach(day => {
+                const tr = document.createElement('tr');
+                const dayLabel = t(day);
+                const dateThis = menuData.this.days[day].date || '';
+                const dateNext = menuData.next.days[day].date || '';
+
+                tr.innerHTML = `
+                    <td>${dayLabel}</td>
+                    <td><input type="date" value="${dateThis ? formatDateForInput(dateThis) : ''}" data-week="this" data-day="${day}"></td>
+                    <td><input type="date" value="${dateNext ? formatDateForInput(dateNext) : ''}" data-week="next" data-day="${day}"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            tbody.querySelectorAll('input[type="date"]').forEach(input => {
+                input.addEventListener('change', async () => {
+                    const week = input.dataset.week;
+                    const day = input.dataset.day;
+                    const value = input.value;
+                    const formatted = value ? new Date(value).toLocaleDateString() : '';
+                    menuData[week].days[day].date = formatted;
+                    try {
+                        await saveDateToServer(week, day, formatted);
+                        renderDaySelector();
+                        showToast('Дата обновлена');
+                    } catch {
+                        showToast(t('server_error'));
+                    }
+                });
+            });
+        }
+
+        function formatDateForInput(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return '';
+            const parts = dateStr.split('.');
+            if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            return dateStr;
+        }
+
+        function renderAdminDishList() {
+            const container = $('#admin-dish-list');
+            const lang = state.language;
+            let html = '';
+            ['this', 'next'].forEach(week => {
+                DAYS.forEach(day => {
+                    const dayData = menuData[week].days[day];
+                    if (dayData && dayData.dishes) {
+                        dayData.dishes.forEach(dish => {
+                            html += `
+                                <div class="admin-dish-item">
+                                    <span>${dish.name[lang]} (${dish.price} ${CURRENCY_SYMBOL}, ${dish.weight} г) — ${menuData[week].weekLabel[lang]}, ${dayData.label[lang]}</span>
+                                    <button onclick="deleteDish('${week}', '${day}', '${dish.id}')" title="${t('delete')}">🗑️</button>
+                                </div>
+                            `;
+                        });
+                    }
+                });
+            });
+            if (menuData.business) {
+                menuData.business.forEach(dish => {
+                    html += `
+                        <div class="admin-dish-item">
+                            <span>${dish.name[lang]} (${dish.price} ${CURRENCY_SYMBOL}, ${dish.weight} г) — 🍱 Бизнес-ланч</span>
+                            <button onclick="deleteBusinessDish('${dish.id}')" title="${t('delete')}">🗑️</button>
+                        </div>
+                    `;
+                });
+            }
+            container.innerHTML = html || `<p style="text-align:center;color:var(--text-light)">Нет блюд</p>`;
+        }
+
+        async function deleteDish(week, day, dishId) {
+            const dayData = menuData[week].days[day];
+            if (!dayData) return;
+            try {
+                await deleteDishOnServer(dishId);
+                dayData.dishes = dayData.dishes.filter(d => d.id !== dishId);
+                renderAdminDishList();
+                renderMenu();
+                renderBusinessMenu();
+                updateCartBadge();
+                showToast('Блюдо удалено');
+            } catch {
+                showToast(t('server_error'));
+            }
+        }
+
+        async function deleteBusinessDish(dishId) {
+            try {
+                await deleteDishOnServer(dishId);
+                menuData.business = menuData.business.filter(d => d.id !== dishId);
+                renderAdminDishList();
+                renderBusinessMenu();
+                updateCartBadge();
+                showToast('Бизнес-ланч удалён');
+            } catch {
+                showToast(t('server_error'));
+            }
+        }
+
+        function handleAdminLogout() {
+            state.isAdminLoggedIn = false;
+            sessionStorage.removeItem('adminToken');
+            showScreen('main');
+            showToast('🔓 Вы вышли из панели администратора');
+        }
+
+        // ===================================================================
+        // ==================== IMAGE UPLOAD ====================
+        // ===================================================================
+        function setupImageUpload() {
+            const fileInput = $('#admin-image-file');
+            const preview = $('#admin-image-preview');
+            const clearBtn = $('#admin-image-clear');
+            const urlInput = $('#admin-image');
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.uploadedImageData = event.target.result;
+                        preview.src = event.target.result;
+                        preview.style.display = 'block';
+                        clearBtn.style.display = 'inline-block';
+                        urlInput.value = '';
+                        urlInput.disabled = true;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            clearBtn.addEventListener('click', () => {
+                fileInput.value = '';
+                state.uploadedImageData = null;
+                preview.style.display = 'none';
+                clearBtn.style.display = 'none';
+                urlInput.disabled = false;
+                urlInput.value = '';
+            });
+
+            urlInput.addEventListener('input', () => {
+                if (urlInput.value.trim() !== '') {
+                    fileInput.value = '';
+                    state.uploadedImageData = null;
+                    preview.style.display = 'none';
+                    clearBtn.style.display = 'none';
+                    urlInput.disabled = false;
+                }
+            });
+        }
+
+        // ===================================================================
+        // ==================== TOAST ====================
+        // ===================================================================
+        function showToast(message) {
+            const toast = $('#toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ===================================================================
+        // ==================== СОЗДАНИЕ ЗАКАЗА ====================
+        // ===================================================================
+        function buildOrderData() {
+            const cartItems = Object.values(state.cart);
+            const lang = state.language;
+            const totalAmount = cartItems.reduce((sum, item) => sum + item.dish.price * item.qty, 0);
+
+            return {
+                userName: state.userName,
+                language: state.language,
+                totalAmount,
+                itemsCount: cartItems.reduce((sum, item) => sum + item.qty, 0),
+                items: cartItems.map(item => {
+                    let dayLabel = '', date = '', weekLabel = '', dayKey = '';
+                    if (item.sourceType === 'business') {
+                        dayLabel = 'Бизнес-ланч';
+                        date = item.orderDate || '';
+                        weekLabel = 'Постоянное';
+                        dayKey = 'business';
+                    } else {
+                        dayLabel = item.dayLabel || '';
+                        date = item.date || '';
+                        weekLabel = menuData[item.week].weekLabel[lang];
+                        dayKey = item.day || '';
+                    }
+                    return {
+                        dishId: item.dish.id,
+                        name: item.dish.name[lang],
+                        price: item.dish.price,
+                        weight: item.dish.weight,
+                        qty: item.qty,
+                        subtotal: item.dish.price * item.qty,
+                        category: item.dish.category[lang],
+                        week: item.week || 'business',
+                        weekLabel,
+                        day: dayKey,
+                        dayLabel,
+                        date,
+                        sourceType: item.sourceType
+                    };
+                }),
+            };
+        }
+
+        // ===================================================================
+        // ==================== INIT ====================
+        // ===================================================================
+        async function init() {
+            applyTheme();
+            applyTranslations();
+            await loadMenuFromServer();
+            renderDaySelector();
+            renderMenu();
+            renderBusinessMenu();
+            updateCartBadge();
+            setupImageUpload();
+            initLanguageSelectors();
+        }
+
+        function initLanguageSelectors() {
+            ['language-select', 'header-lang-select', 'admin-login-lang-select',
+             'admin-panel-lang-select', 'checkout-lang-select', 'success-lang-select'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', (e) => setLanguage(e.target.value));
+            });
+        }
+
+        // ===================================================================
+        // ==================== СОБЫТИЯ ====================
+        // ===================================================================
+
+        $('#welcome-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = $('#user-name-input').value.trim();
+            const lang = $('#language-select').value;
+            if (name.length < 2) {
+                showToast('Введите имя (мин. 2 символа)');
+                return;
+            }
+            state.userName = name;
+            state.language = lang;
+            applyTranslations();
+            showScreen('main');
+        });
+
+        document.querySelectorAll('.week-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.selectedWeek = btn.dataset.week;
+                state.selectedDay = 'monday';
+                renderDaySelector();
+                renderMenu();
+            });
+        });
+
+        $('#cart-badge').addEventListener('click', openCart);
+        $('#cart-close-btn').addEventListener('click', closeCart);
+        $('#cart-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeCart();
+        });
+        $('#checkout-btn').addEventListener('click', openCheckout);
+        $('#back-to-cart-btn').addEventListener('click', () => {
+            showScreen('main');
+            openCart();
+        });
+
+        $('#confirm-payment-btn').addEventListener('click', async () => {
+            const orderData = buildOrderData();
+            const result = await sendOrderToServer(orderData);
+
+            if (result) {
+                showToast(t('toast_order_sent'));
+                // Показываем номер заказа на странице оплаты
+                const numEl = document.getElementById('payment-order-number');
+                if (numEl) numEl.textContent = result.orderNumber;
+                const orderNumEl = document.getElementById('checkout-order-number');
+                if (orderNumEl) orderNumEl.textContent = result.orderNumber;
+
+                // Небольшая задержка, чтобы пользователь увидел номер, затем success
+                setTimeout(() => {
+                    showScreen('success');
+                    state.cart = {};
+                    updateCartBadge();
+                    renderMenu();
+                    renderBusinessMenu();
+                    renderCart();
+                }, 1200);
+            } else {
+                showToast(t('toast_order_error'));
+            }
+        });
+
+        $('#new-order-btn').addEventListener('click', () => {
+            state.cart = {};
+            updateCartBadge();
+            renderMenu();
+            renderBusinessMenu();
+            renderCart();
+            showScreen('main');
+        });
+
+        $('#theme-toggle').addEventListener('click', toggleTheme);
+
+        $('#admin-toggle').addEventListener('click', () => {
+            if (state.isAdminLoggedIn) openAdminPanel();
+            else showScreen('adminLogin');
+        });
+        $('#admin-login-form').addEventListener('submit', handleAdminLogin);
+        $('#admin-login-back').addEventListener('click', () => showScreen('main'));
+        $('#admin-logout-btn').addEventListener('click', handleAdminLogout);
+        $('#back-to-menu-btn').addEventListener('click', () => {
+            showScreen('main');
+            renderMenu();
+            renderBusinessMenu();
+        });
+
+        $('#admin-type').addEventListener('change', (e) => {
+            const isWeekly = e.target.value === 'weekly';
+            $('#admin-week-group').style.display = isWeekly ? '' : 'none';
+            $('#admin-day-group').style.display = isWeekly ? '' : 'none';
+        });
+
+        $('#admin-dish-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = $('#admin-type').value;
+            const week = $('#admin-week').value;
+            const day = $('#admin-day').value;
+            const nameRu = $('#admin-name-ru').value.trim();
+            const nameEs = $('#admin-name-es').value.trim();
+            const descRu = $('#admin-desc-ru').value.trim();
+            const descEs = $('#admin-desc-es').value.trim();
+            const price = parseFloat($('#admin-price').value);
+            const weight = parseInt($('#admin-weight').value) || 0;
+            const category = $('#admin-category').value.trim();
+            const imageUrl = $('#admin-image').value.trim();
+            const imageData = state.uploadedImageData;
+
+            if (!nameRu || !nameEs || !descRu || !descEs || !price || !category) {
+                showToast(t('fill_required'));
+                return;
+            }
+
+            // Формируем payload для Supabase
+            const payload = {
+                name_ru: nameRu,
+                name_es: nameEs,
+                desc_ru: descRu,
+                desc_es: descEs,
+                price: price,
+                weight: weight,
+                category_ru: category,
+                category_es: category,
+                image_url: imageUrl || imageData || '',
+                type: type,
+                week: type === 'weekly' ? week : null,
+                day: type === 'weekly' ? day : null
+            };
+
+            try {
+                const saved = await saveDishToServer(payload);
+                // Добавляем в локальную структуру
+                const newDish = {
+                    id: saved.id,
+                    name: { ru: nameRu, es: nameEs },
+                    desc: { ru: descRu, es: descEs },
+                    price: price,
+                    weight: weight,
+                    category: { ru: category, es: category },
+                    image: imageUrl || '',
+                    imageData: imageData || null
+                };
+                if (type === 'weekly') {
+                    menuData[week].days[day].dishes.push(newDish);
+                } else {
+                    menuData.business.push(newDish);
+                }
+
+                renderAdminDishList();
+                renderMenu();
+                renderBusinessMenu();
+
+                e.target.reset();
+                state.uploadedImageData = null;
+                $('#admin-image-preview').style.display = 'none';
+                $('#admin-image-clear').style.display = 'none';
+                $('#admin-image').disabled = false;
+                $('#admin-image-file').value = '';
+                $('#admin-week-group').style.display = '';
+                $('#admin-day-group').style.display = '';
+                showToast('✅ ' + t('add_dish'));
+            } catch (err) {
+                console.error(err);
+                showToast(t('server_error'));
+            }
+        });
+
+        $('#menu-grid').addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.classList.contains('qty-plus') || target.classList.contains('add-to-cart-btn')) {
+                const cartKey = target.dataset.cartKey;
+                if (!cartKey) return;
+                const parts = cartKey.split('_');
+                const week = parts[0];
+                const day = parts[1];
+                const dishId = parts.slice(2).join('_');
+                addWeeklyToCart(week, day, dishId);
+            } else if (target.classList.contains('qty-minus')) {
+                const cartKey = target.dataset.cartKey;
+                if (cartKey) changeQty(cartKey, -1);
+            }
+        });
+
+        $('#business-grid').addEventListener('click', (e) => {
+            const target = e.target;
+            const card = target.closest('.business-card');
+            if (!card) return;
+            const dishId = card.dataset.dishId;
+
+            if (target.classList.contains('business-qty-plus')) {
+                const date = card.querySelector('.business-date-input').value;
+                addBusinessToCart(dishId, date);
+            } else if (target.classList.contains('business-qty-minus')) {
+                const date = card.querySelector('.business-date-input').value;
+                const cartKey = `business_${dishId}_${date}`;
+                if (state.cart[cartKey]) {
+                    changeQty(cartKey, -1);
+                } else {
+                    const foundKey = Object.keys(state.cart).find(k => k.startsWith(`business_${dishId}_`));
+                    if (foundKey) changeQty(foundKey, -1);
+                }
+            } else if (target.classList.contains('add-to-cart-btn') && target.dataset.type === 'business') {
+                const date = card.querySelector('.business-date-input').value;
+                addBusinessToCart(dishId, date);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'copy-clabe-btn') {
+                const clabe = document.getElementById('clabe-number').textContent.trim();
+                navigator.clipboard.writeText(clabe).then(() => {
+                    showToast(t('copy_clabe'));
+                }).catch(() => showToast(t('copy_fail')));
+            }
+        });
+
+        // Сделаем функции глобальными для inline-обработчиков
+        window.changeQty = changeQty;
+        window.removeFromCart = removeFromCart;
+        window.deleteDish = deleteDish;
+        window.deleteBusinessDish = deleteBusinessDish;
+
+        init();
+    </script>
+</body>
+</html>
