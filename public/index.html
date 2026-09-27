@@ -581,216 +581,243 @@
         <main class="admin-panel-container">
             <div class="admin-card">
                 <h2 class="admin-title" data-i18n="admin_title">⚙️ Панель администратора</h2>
-<div class="stats-section">
-    <h3 style="margin-bottom:12px;" data-i18n="stats_title">📊 Статистика заказов</h3>
 
-    <div class="stats-filter">
-        <div class="stats-filter-group">
-            <label data-i18n="stats_from">С</label>
-            <input type="date" id="stats-from" class="form-input">
+                <!-- Переключатель вкладок -->
+            <div class="admin-tabs">
+                <button type="button" class="admin-tab active" data-tab="panel" data-i18n="tab_panel">📋 Меню</button>
+                <button type="button" class="admin-tab" data-tab="active" data-i18n="tab_active">🔴 Заказы в работе</button>
+                <button type="button" class="admin-tab" data-tab="completed" data-i18n="tab_completed">✅ Выполненные заказы</button>
+            </div>
+
+<div class="admin-tab-content active" data-tab-content="panel">
+    <div class="stats-section">
+        <h3 style="margin-bottom:12px;" data-i18n="stats_title">📊 Статистика заказов</h3>
+
+        <div class="stats-filter">
+            <div class="stats-filter-group">
+                <label data-i18n="stats_from">С</label>
+                <input type="date" id="stats-from" class="form-input">
+            </div>
+            <div class="stats-filter-group">
+                <label data-i18n="stats_to">По</label>
+                <input type="date" id="stats-to" class="form-input">
+            </div>
+            <div class="stats-filter-presets">
+                <button type="button" class="btn btn-sm btn-secondary" data-range="today" data-i18n="stats_today">Сегодня</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-range="7" data-i18n="stats_7d">7 дней</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-range="30" data-i18n="stats_30d">30 дней</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-range="month" data-i18n="stats_month">Этот месяц</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" id="stats-apply" data-i18n="stats_apply">Применить</button>
         </div>
-        <div class="stats-filter-group">
-            <label data-i18n="stats_to">По</label>
-            <input type="date" id="stats-to" class="form-input">
+
+        <div class="stats-grid">
+            <div class="stats-card"><div class="stats-label" data-i18n="stats_orders">Заказов</div><div class="stats-value" id="stat-orders">—</div></div>
+            <div class="stats-card"><div class="stats-label" data-i18n="stats_revenue">Выручка</div><div class="stats-value" id="stat-revenue">—</div></div>
+            <div class="stats-card"><div class="stats-label" data-i18n="stats_avg">Средний чек</div><div class="stats-value" id="stat-avg">—</div></div>
+            <div class="stats-card"><div class="stats-label" data-i18n="stats_users">Уникальных клиентов</div><div class="stats-value" id="stat-users">—</div></div>
         </div>
-        <div class="stats-filter-presets">
-            <button type="button" class="btn btn-sm btn-secondary" data-range="today" data-i18n="stats_today">Сегодня</button>
-            <button type="button" class="btn btn-sm btn-secondary" data-range="7" data-i18n="stats_7d">7 дней</button>
-            <button type="button" class="btn btn-sm btn-secondary" data-range="30" data-i18n="stats_30d">30 дней</button>
-            <button type="button" class="btn btn-sm btn-secondary" data-range="month" data-i18n="stats_month">Этот месяц</button>
+
+        <div class="stats-totals">
+            <div data-i18n="stats_total_orders">Всего заказов:</div>
+            <strong id="stat-total-orders">—</strong>
+            <div data-i18n="stats_total_revenue">Всего выручка:</div>
+            <strong id="stat-total-revenue">—</strong>
         </div>
-        <button type="button" class="btn btn-sm btn-primary" id="stats-apply" data-i18n="stats_apply">Применить</button>
+
+        <div class="stats-export">
+            <span data-i18n="stats_export_label">Экспорт:</span>
+            <button type="button" class="btn btn-sm btn-outline" id="export-orders" data-i18n="export_orders">Заказы (CSV)</button>
+            <button type="button" class="btn btn-sm btn-outline" id="export-dishes" data-i18n="export_dishes">Блюда (CSV)</button>
+            <button type="button" class="btn btn-sm btn-outline" id="export-daily" data-i18n="export_daily">По дням (CSV)</button>
+        </div>
+
+        <h4 style="margin:20px 0 10px;" data-i18n="stats_top_dishes">Топ блюд</h4>
+        <div id="stats-top-dishes" class="stats-top-list"></div>
+
+        <hr style="border-color: var(--border); margin: 20px 0;">
     </div>
+                    <h3 style="margin-bottom:12px;" data-i18n="dates_title">Даты для дней недели</h3>
+                    <table class="admin-dates-table" id="admin-dates-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="day">День</th>
+                                <th data-i18n="this_week">Эта неделя</th>
+                                <th data-i18n="next_week">Следующая неделя</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
 
-    <div class="stats-grid">
-        <div class="stats-card"><div class="stats-label" data-i18n="stats_orders">Заказов</div><div class="stats-value" id="stat-orders">—</div></div>
-        <div class="stats-card"><div class="stats-label" data-i18n="stats_revenue">Выручка</div><div class="stats-value" id="stat-revenue">—</div></div>
-        <div class="stats-card"><div class="stats-label" data-i18n="stats_avg">Средний чек</div><div class="stats-value" id="stat-avg">—</div></div>
-        <div class="stats-card"><div class="stats-label" data-i18n="stats_users">Уникальных клиентов</div><div class="stats-value" id="stat-users">—</div></div>
-    </div>
+                    <hr style="border-color: var(--border); margin: 20px 0;">
 
-    <div class="stats-totals">
-        <div data-i18n="stats_total_orders">Всего заказов:</div>
-        <strong id="stat-total-orders">—</strong>
-        <div data-i18n="stats_total_revenue">Всего выручка:</div>
-        <strong id="stat-total-revenue">—</strong>
-    </div>
+                    <h3 style="margin-bottom:12px;" data-i18n="add_dish">Добавить блюдо</h3>
+                    <form class="admin-form" id="admin-dish-form">
+                        <div class="form-group">
+                            <label data-i18n="dish_name_ru">Название (рус.)</label>
+                            <input type="text" class="form-input" id="admin-name-ru" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="dish_name_es">Название (исп.)</label>
+                            <input type="text" class="form-input" id="admin-name-es" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label data-i18n="dish_desc_ru">Описание (рус.)</label>
+                            <textarea class="form-input" id="admin-desc-ru" rows="2" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label data-i18n="dish_desc_es">Описание (исп.)</label>
+                            <textarea class="form-input" id="admin-desc-es" rows="2" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="price">Цена (MXN)</label>
+                            <input type="number" class="form-input" id="admin-price" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="weight">Вес (г)</label>
+                            <input type="number" class="form-input" id="admin-weight" min="1" value="200" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="category">Категория</label>
+                            <input type="text" class="form-input" id="admin-category" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="type">Тип блюда</label>
+                            <select class="form-select" id="admin-type">
+                                <option value="weekly" data-i18n="type_weekly">Меню на день</option>
+                                <option value="business" data-i18n="type_business">Бизнес-ланч</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="admin-week-group">
+                            <label data-i18n="week">Неделя</label>
+                            <select class="form-select" id="admin-week">
+                                <option value="this" data-i18n="this_week">Эта неделя</option>
+                                <option value="next" data-i18n="next_week">Следующая неделя</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="admin-day-group">
+                            <label data-i18n="day">День недели</label>
+                            <select class="form-select" id="admin-day">
+                                <option value="monday" data-i18n="monday">Понедельник</option>
+                                <option value="tuesday" data-i18n="tuesday">Вторник</option>
+                                <option value="wednesday" data-i18n="wednesday">Среда</option>
+                                <option value="thursday" data-i18n="thursday">Четверг</option>
+                                <option value="friday" data-i18n="friday">Пятница</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label data-i18n="image_url">Изображение (URL или загрузка — необязательно)</label>
+                            <input type="url" class="form-input" id="admin-image" placeholder="https://...">
+                            <div class="image-upload-area" style="margin-top:8px;">
+                                <label for="admin-image-file" class="image-upload-label" data-i18n="upload_image">Загрузить с устройства</label>
+                                <input type="file" id="admin-image-file" accept="image/*">
+                                <img id="admin-image-preview" src="" alt="Превью" style="display:none;">
+                                <button type="button" id="admin-image-clear" class="btn btn-sm btn-secondary" style="display:none;" data-i18n="clear">Очистить</button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:flex-end;">
+                            <button type="submit" class="btn btn-primary" data-i18n="add_dish">Добавить блюдо</button>
+                        </div>
+                    </form>
+                    <hr style="border-color: var(--border); margin: 20px 0;">
+                    <h3 style="margin-bottom:12px;" data-i18n="existing_dishes">Существующие блюда</h3>
+                    <div class="admin-dish-list" id="admin-dish-list"></div>
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button class="btn btn-secondary" id="back-to-menu-btn" data-i18n="back_to_menu">← Назад в меню</button>
+                        <button class="btn btn-outline" id="admin-logout-btn" data-i18n="logout">Выйти</button>
+            </div>
+                    </div>
+                    <!-- ========== ВКЛАДКА «ЗАКАЗЫ В РАБОТЕ» ========== -->
+                    <div class="admin-tab-content" data-tab-content="active">
+                        <h3 style="margin-bottom:12px;" data-i18n="orders_active_title">🔴 Заказы в работе</h3>
+                        <div id="orders-active-list" class="orders-list">
+                            <div style="text-align:center;color:var(--text-light);padding:20px;" data-i18n="loading">Загрузка...</div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" id="refresh-active-orders" style="margin-top:16px;" data-i18n="refresh">Обновить</button>
+                    </div>
 
-    <div class="stats-export">
-        <span data-i18n="stats_export_label">Экспорт:</span>
-        <button type="button" class="btn btn-sm btn-outline" id="export-orders" data-i18n="export_orders">Заказы (CSV)</button>
-        <button type="button" class="btn btn-sm btn-outline" id="export-dishes" data-i18n="export_dishes">Блюда (CSV)</button>
-        <button type="button" class="btn btn-sm btn-outline" id="export-daily" data-i18n="export_daily">По дням (CSV)</button>
-    </div>
+                    <!-- ========== ВКЛАДКА «ВЫПОЛНЕННЫЕ ЗАКАЗЫ» ========== -->
+                    <div class="admin-tab-content" data-tab-content="completed">
+                        <h3 style="margin-bottom:12px;" data-i18n="orders_completed_title">✅ Выполненные заказы</h3>
+                        <div id="orders-completed-list" class="orders-list">
+                            <div style="text-align:center;color:var(--text-light);padding:20px;" data-i18n="loading">Загрузка...</div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" id="refresh-completed-orders" style="margin-top:16px;" data-i18n="refresh">Обновить</button>
+                    </div>
+                </div>
+            </main>
+        </div>
 
-    <h4 style="margin:20px 0 10px;" data-i18n="stats_top_dishes">Топ блюд</h4>
-    <div id="stats-top-dishes" class="stats-top-list"></div>
+        <!-- ==================== CART ==================== -->
+        <div class="cart-overlay" id="cart-overlay">
+            <div class="cart-panel">
+                <div class="cart-header">
+                    <span class="cart-title" data-i18n="cart_title">🛒 Корзина</span>
+                    <button class="cart-close" id="cart-close-btn">✕</button>
+                </div>
+                <div class="cart-items" id="cart-items"></div>
+                <div class="cart-total" id="cart-total">Итого: 0 $</div>
+                <button class="btn btn-primary" id="checkout-btn" data-i18n="checkout">Оформить заказ →</button>
+            </div>
+        </div>
 
-    <hr style="border-color: var(--border); margin: 20px 0;">
-</div>
-                <h3 style="margin-bottom:12px;" data-i18n="dates_title">Даты для дней недели</h3>
-                <table class="admin-dates-table" id="admin-dates-table">
-                    <thead>
-                        <tr>
-                            <th data-i18n="day">День</th>
-                            <th data-i18n="this_week">Эта неделя</th>
-                            <th data-i18n="next_week">Следующая неделя</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-
-                <hr style="border-color: var(--border); margin: 20px 0;">
-
-                <h3 style="margin-bottom:12px;" data-i18n="add_dish">Добавить блюдо</h3>
-                <form class="admin-form" id="admin-dish-form">
-                    <div class="form-group">
-                        <label data-i18n="dish_name_ru">Название (рус.)</label>
-                        <input type="text" class="form-input" id="admin-name-ru" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="dish_name_es">Название (исп.)</label>
-                        <input type="text" class="form-input" id="admin-name-es" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label data-i18n="dish_desc_ru">Описание (рус.)</label>
-                        <textarea class="form-input" id="admin-desc-ru" rows="2" required></textarea>
-                    </div>
-                    <div class="form-group full-width">
-                        <label data-i18n="dish_desc_es">Описание (исп.)</label>
-                        <textarea class="form-input" id="admin-desc-es" rows="2" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="price">Цена (MXN)</label>
-                        <input type="number" class="form-input" id="admin-price" min="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="weight">Вес (г)</label>
-                        <input type="number" class="form-input" id="admin-weight" min="1" value="200" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="category">Категория</label>
-                        <input type="text" class="form-input" id="admin-category" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="type">Тип блюда</label>
-                        <select class="form-select" id="admin-type">
-                            <option value="weekly" data-i18n="type_weekly">Меню на день</option>
-                            <option value="business" data-i18n="type_business">Бизнес-ланч</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="admin-week-group">
-                        <label data-i18n="week">Неделя</label>
-                        <select class="form-select" id="admin-week">
-                            <option value="this" data-i18n="this_week">Эта неделя</option>
-                            <option value="next" data-i18n="next_week">Следующая неделя</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="admin-day-group">
-                        <label data-i18n="day">День недели</label>
-                        <select class="form-select" id="admin-day">
-                            <option value="monday" data-i18n="monday">Понедельник</option>
-                            <option value="tuesday" data-i18n="tuesday">Вторник</option>
-                            <option value="wednesday" data-i18n="wednesday">Среда</option>
-                            <option value="thursday" data-i18n="thursday">Четверг</option>
-                            <option value="friday" data-i18n="friday">Пятница</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label data-i18n="image_url">Изображение (URL или загрузка — необязательно)</label>
-                        <input type="url" class="form-input" id="admin-image" placeholder="https://...">
-                        <div class="image-upload-area" style="margin-top:8px;">
-                            <label for="admin-image-file" class="image-upload-label" data-i18n="upload_image">Загрузить с устройства</label>
-                            <input type="file" id="admin-image-file" accept="image/*">
-                            <img id="admin-image-preview" src="" alt="Превью" style="display:none;">
-                            <button type="button" id="admin-image-clear" class="btn btn-sm btn-secondary" style="display:none;" data-i18n="clear">Очистить</button>
+        <!-- ==================== CHECKOUT ==================== -->
+        <div class="screen" id="checkout-screen">
+            <div class="global-lang-select">
+                <select id="checkout-lang-select">
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+            </div>
+            <main class="checkout-container">
+                <div class="checkout-card">
+                    <h2 class="checkout-title" data-i18n="checkout_title">💳 Оплата заказа</h2>
+                    <div class="checkout-summary">
+                        <div class="checkout-summary-row">
+                            <span data-i18n="order_for">Заказ для:</span>
+                            <strong id="checkout-user-name"></strong>
+                        </div>
+                        <div class="checkout-summary-row">
+                            <span data-i18n="order_number">Номер заказа:</span>
+                            <strong id="checkout-order-number">—</strong>
+                        </div>
+                        <div class="checkout-summary-row">
+                            <span data-i18n="items_count">Количество блюд:</span>
+                            <strong id="checkout-items-count"></strong>
+                        </div>
+                        <div class="checkout-summary-total">
+                            <span data-i18n="total_amount">Итого к оплате:</span>
+                            <strong id="checkout-total-amount"></strong>
+                        </div>
+                        <div style="margin-top:14px;">
+                            <strong style="font-size:14px;" data-i18n="order_details">Состав заказа:</strong>
+                            <ul class="checkout-item-list" id="checkout-item-list"></ul>
                         </div>
                     </div>
-                    <div class="form-group" style="display:flex; align-items:flex-end;">
-                        <button type="submit" class="btn btn-primary" data-i18n="add_dish">Добавить блюдо</button>
-                    </div>
-                </form>
-                <hr style="border-color: var(--border); margin: 20px 0;">
-                <h3 style="margin-bottom:12px;" data-i18n="existing_dishes">Существующие блюда</h3>
-                <div class="admin-dish-list" id="admin-dish-list"></div>
-                <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button class="btn btn-secondary" id="back-to-menu-btn" data-i18n="back_to_menu">← Назад в меню</button>
-                    <button class="btn btn-outline" id="admin-logout-btn" data-i18n="logout">Выйти</button>
+
+                    <div class="payment-info" id="payment-info"></div>
+
+                    <button class="btn btn-primary" id="confirm-payment-btn" data-i18n="confirm_payment">Подтвердить оплату</button>
+                    <button class="btn btn-secondary" id="back-to-cart-btn" style="margin-top:10px;" data-i18n="back_to_cart">← Назад в корзину</button>
                 </div>
+            </main>
+        </div>
+
+        <!-- ==================== SUCCESS ==================== -->
+        <div class="screen" id="success-screen">
+            <div class="global-lang-select">
+                <select id="success-lang-select">
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
             </div>
-        </main>
-    </div>
-
-    <!-- ==================== CART ==================== -->
-    <div class="cart-overlay" id="cart-overlay">
-        <div class="cart-panel">
-            <div class="cart-header">
-                <span class="cart-title" data-i18n="cart_title">🛒 Корзина</span>
-                <button class="cart-close" id="cart-close-btn">✕</button>
+            <div class="success-container">
+                <div class="success-icon">🎉</div>
+                <h1 class="success-title" data-i18n="success_title">Заказ оформлен!</h1>
+                <p class="success-message" data-i18n="success_message">Спасибо за ваш заказ. Данные успешно отправлены.</p>
+                <button class="btn btn-primary" style="max-width:280px;" id="new-order-btn" data-i18n="new_order">Сделать новый заказ</button>
             </div>
-            <div class="cart-items" id="cart-items"></div>
-            <div class="cart-total" id="cart-total">Итого: 0 $</div>
-            <button class="btn btn-primary" id="checkout-btn" data-i18n="checkout">Оформить заказ →</button>
         </div>
-    </div>
-
-    <!-- ==================== CHECKOUT ==================== -->
-    <div class="screen" id="checkout-screen">
-        <div class="global-lang-select">
-            <select id="checkout-lang-select">
-                <option value="ru">🇷🇺 Русский</option>
-                <option value="es">🇪🇸 Español</option>
-            </select>
-        </div>
-        <main class="checkout-container">
-            <div class="checkout-card">
-                <h2 class="checkout-title" data-i18n="checkout_title">💳 Оплата заказа</h2>
-                <div class="checkout-summary">
-                    <div class="checkout-summary-row">
-                        <span data-i18n="order_for">Заказ для:</span>
-                        <strong id="checkout-user-name"></strong>
-                    </div>
-                    <div class="checkout-summary-row">
-                        <span data-i18n="order_number">Номер заказа:</span>
-                        <strong id="checkout-order-number">—</strong>
-                    </div>
-                    <div class="checkout-summary-row">
-                        <span data-i18n="items_count">Количество блюд:</span>
-                        <strong id="checkout-items-count"></strong>
-                    </div>
-                    <div class="checkout-summary-total">
-                        <span data-i18n="total_amount">Итого к оплате:</span>
-                        <strong id="checkout-total-amount"></strong>
-                    </div>
-                    <div style="margin-top:14px;">
-                        <strong style="font-size:14px;" data-i18n="order_details">Состав заказа:</strong>
-                        <ul class="checkout-item-list" id="checkout-item-list"></ul>
-                    </div>
-                </div>
-
-                <div class="payment-info" id="payment-info"></div>
-
-                <button class="btn btn-primary" id="confirm-payment-btn" data-i18n="confirm_payment">Подтвердить оплату</button>
-                <button class="btn btn-secondary" id="back-to-cart-btn" style="margin-top:10px;" data-i18n="back_to_cart">← Назад в корзину</button>
-            </div>
-        </main>
-    </div>
-
-    <!-- ==================== SUCCESS ==================== -->
-    <div class="screen" id="success-screen">
-        <div class="global-lang-select">
-            <select id="success-lang-select">
-                <option value="ru">🇷🇺 Русский</option>
-                <option value="es">🇪🇸 Español</option>
-            </select>
-        </div>
-        <div class="success-container">
-            <div class="success-icon">🎉</div>
-            <h1 class="success-title" data-i18n="success_title">Заказ оформлен!</h1>
-            <p class="success-message" data-i18n="success_message">Спасибо за ваш заказ. Данные успешно отправлены.</p>
-            <button class="btn btn-primary" style="max-width:280px;" id="new-order-btn" data-i18n="new_order">Сделать новый заказ</button>
-        </div>
-    </div>
 
     <div class="toast" id="toast"></div>
 
