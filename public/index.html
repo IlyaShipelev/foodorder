@@ -406,55 +406,123 @@
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
         .stats-section { margin-bottom: 24px; }
-.stats-filter {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    align-items: flex-end; margin-bottom: 16px;
-    padding: 14px; background: var(--input-bg);
-    border-radius: var(--radius-sm); border: 1px solid var(--border);
-}
-.stats-filter-group { display: flex; flex-direction: column; gap: 4px; }
-.stats-filter-group label { font-size: 12px; font-weight: 600; color: var(--text-light); }
-.stats-filter-group .form-input { padding: 8px 10px; font-size: 13px; }
-.stats-filter-presets { display: flex; gap: 6px; flex-wrap: wrap; }
+        .stats-filter {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            align-items: flex-end; margin-bottom: 16px;
+            padding: 14px; background: var(--input-bg);
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+        }
+        .stats-filter-group { display: flex; flex-direction: column; gap: 4px; }
+        .stats-filter-group label { font-size: 12px; font-weight: 600; color: var(--text-light); }
+        .stats-filter-group .form-input { padding: 8px 10px; font-size: 13px; }
+        .stats-filter-presets { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-}
-.stats-card {
-    background: var(--input-bg); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 14px 16px;
-    transition: var(--transition);
-}
-.stats-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(232,106,51,0.15); }
-.stats-label { font-size: 12px; color: var(--text-light); margin-bottom: 6px; font-weight: 500; }
-.stats-value { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .stats-card {
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 14px 16px;
+            transition: var(--transition);
+        }
+        .stats-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(232,106,51,0.15); }
+        .stats-label { font-size: 12px; color: var(--text-light); margin-bottom: 6px; font-weight: 500; }
+        .stats-value { font-size: 22px; font-weight: 800; color: var(--primary); }
 
-.stats-totals {
-    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
-    margin-top: 14px; padding: 10px 14px;
-    background: var(--input-bg); border-radius: var(--radius-sm);
-    font-size: 14px;
-}
-.stats-totals strong { color: var(--primary); font-weight: 800; }
+        .stats-totals {
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+            margin-top: 14px; padding: 10px 14px;
+            background: var(--input-bg); border-radius: var(--radius-sm);
+            font-size: 14px;
+        }
+        .stats-totals strong { color: var(--primary); font-weight: 800; }
 
-.stats-export {
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-    margin-top: 14px; font-size: 14px; color: var(--text-light);
-}
+        .stats-export {
+            display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+            margin-top: 14px; font-size: 14px; color: var(--text-light);
+        }
 
-.stats-top-list {
-    background: var(--input-bg); border-radius: var(--radius-sm);
-    padding: 12px 16px; font-size: 14px;
-}
-.stats-top-list .top-row {
-    display: flex; justify-content: space-between;
-    padding: 6px 0; border-bottom: 1px dashed var(--border);
-}
-.stats-top-list .top-row:last-child { border-bottom: none; }
-.stats-top-list .top-name { font-weight: 600; }
-.stats-top-list .top-value { color: var(--primary); font-weight: 700; }
+        .stats-top-list {
+            background: var(--input-bg); border-radius: var(--radius-sm);
+            padding: 12px 16px; font-size: 14px;
+        }
+        .stats-top-list .top-row {
+            display: flex; justify-content: space-between;
+            padding: 6px 0; border-bottom: 1px dashed var(--border);
+        }
+        .stats-top-list .top-row:last-child { border-bottom: none; }
+        .stats-top-list .top-name { font-weight: 600; }
+        .stats-top-list .top-value { color: var(--primary); font-weight: 700; }
+
+        /* Вкладки админки */
+        .admin-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .admin-tab {
+            padding: 10px 18px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            border-radius: 8px 8px 0 0;
+        }
+        .admin-tab:hover { color: var(--text); background: var(--input-bg); }
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--input-bg);
+        }
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* Карточки заказов */
+        .orders-list { display: flex; flex-direction: column; gap: 12px; }
+        .order-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            transition: var(--transition);
+        }
+        .order-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(232,106,51,0.1); }
+        .order-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
+        }
+        .order-card-number { font-size: 16px; font-weight: 800; color: var(--primary); }
+        .order-card-date { font-size: 13px; color: var(--text-light); }
+        .order-card-user { font-weight: 600; margin-bottom: 6px; }
+        .order-card-items {
+            font-size: 13px; color: var(--text-light);
+            margin: 8px 0; padding: 8px 0;
+            border-top: 1px dashed var(--border);
+            border-bottom: 1px dashed var(--border);
+        }
+        .order-card-items li { list-style: none; padding: 2px 0; }
+        .order-card-total {
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; margin-top: 8px; font-size: 15px;
+        }
+        .order-card-total .amount { color: var(--primary); font-size: 17px; font-weight: 800; }
+        .order-card-actions { margin-top: 10px; display: flex; gap: 8px; }
+        .order-card-actions .btn { width: auto; padding: 8px 16px️; font-size: 13px; }
+        .orders-empty {
+            text-align: center; padding: 30px 20px;
+            color: var(--text-light); font-size: 14px;
+            background: var(--input-bg); border-radius: var(--radius-sm);
+            border: 1px dashed var(--border);
+        }
 
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
@@ -922,6 +990,19 @@
                 stats_invalid_range: '⚠️ Неверный диапазон',
                 stats_no_orders: 'Пока нет заказов за период',
                 stats_top_dishes: 'Топ блюд',
+                tab_panel: '📋 Меню',
+                tab_active: '🔴 Заказы в работе',
+                tab_completed: '✅ Выполненные заказы',
+                orders_active_title: '🔴 Заказы в работе',
+                orders_completed_title: '✅ Выполненные заказы',
+                orders_no_active: 'Пока нет активных заказов',
+                orders_no_completed: 'Пока нет выполненных заказов',
+                mark_completed: 'Заказ выполнен',
+                return_to_active: 'Вернуть в работу',
+                order_completed_msg: '✅ Заказ выполнен',
+                order_returned_msg: '↩️ Заказ возвращён в работу',
+                refresh: 'Обновить',
+                loading: 'Загрузка...',
             },
             es: {
                 welcome_title: '¡Bienvenido!',
@@ -1009,6 +1090,19 @@
                 stats_invalid_range: '⚠️ Rango inválido',
                 stats_no_orders: 'Aún no hay pedidos en el período',
                 stats_top_dishes: 'Platos más pedidos',
+                tab_panel: '📋 Menú',
+                tab_active: '🔴 Pedidos en curso',
+                tab_completed: '✅ Pedidos completados',
+                orders_active_title: '🔴 Pedidos en curso',
+                orders_completed_title: '✅ Pedidos completados',
+                orders_no_active: 'Aún no hay pedidos activos',
+                orders_no_completed: 'Aún no hay pedidos completados',
+                mark_completed: 'Pedido completado',
+                return_to_active: 'Devolver a en curso',
+                order_completed_msg: '✅ Pedido completado',
+                order_returned_msg: '↩️ Pedido devuelto a en curso',
+                refresh: 'Actualizar',
+                loading: 'Cargando...',
             }
         };
 
@@ -1219,113 +1313,232 @@
         }
 
         // ===================================================================
-// ==================== СТАТИСТИКА ====================
-// ===================================================================
-let statsRange = { from: null, to: null };
+        // ==================== СТАТИСТИКА ====================
+        // ===================================================================
+        let statsRange = { from: null, to: null };
 
-async function loadStats() {
-    const token = sessionStorage.getItem('adminToken');
-    if (!token) return;
+        async function loadStats() {
+            const token = sessionStorage.getItem('adminToken');
+            if (!token) return;
 
-    try {
-        const params = new URLSearchParams();
-        if (statsRange.from) params.set('from', statsRange.from);
-        if (statsRange.to) params.set('to', statsRange.to);
+            try {
+                const params = new URLSearchParams();
+                if (statsRange.from) params.set('from', statsRange.from);
+                if (statsRange.to) params.set('to', statsRange.to);
 
-        const res = await fetch(`${API_BASE}/get-stats?${params.toString()}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Stats fetch failed');
+                const res = await fetch(`${API_BASE}/get-stats?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Stats fetch failed');
 
-        const { summary, topDishes, totals, range } = await res.json();
+                const { summary, topDishes, totals, range } = await res.json();
 
-        document.getElementById('stat-orders').textContent = summary.orders_count ?? 0;
-        document.getElementById('stat-revenue').textContent =
-            `${Number(summary.revenue ?? 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}`;
-        document.getElementById('stat-avg').textContent =
-            `${Number(summary.avg_order ?? 0).toFixed(2)} ${CURRENCY_SYMBOL}`;
-        document.getElementById('stat-users').textContent = summary.unique_users ?? 0;
+                document.getElementById('stat-orders').textContent = summary.orders_count ?? 0;
+                document.getElementById('stat-revenue').textContent =
+                    `${Number(summary.revenue ?? 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}`;
+                document.getElementById('stat-avg').textContent =
+                    `${Number(summary.avg_order ?? 0).toFixed(2)} ${CURRENCY_SYMBOL}`;
+                document.getElementById('stat-users').textContent = summary.unique_users ?? 0;
 
-        if (totals) {
-            document.getElementById('stat-total-orders').textContent = totals.orders_total ?? 0;
-            document.getElementById('stat-total-revenue').textContent =
-                `${Number(totals.revenue_total ?? 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}`;
+                if (totals) {
+                    document.getElementById('stat-total-orders').textContent = totals.orders_total ?? 0;
+                    document.getElementById('stat-total-revenue').textContent =
+                        `${Number(totals.revenue_total ?? 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}`;
+                }
+
+                const topBox = document.getElementById('stats-top-dishes');
+                if (!topDishes.length) {
+                    topBox.innerHTML = `<div style="color:var(--text-light)">${t('stats_no_orders')}</div>`;
+                } else {
+                    topBox.innerHTML = topDishes.map(d => `
+                        <div class="top-row">
+                            <span class="top-name">${d.dish_name}</span>
+                            <span class="top-value">${d.total_qty} шт • ${Number(d.total_revenue).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}</span>
+                        </div>
+                    `).join('');
+                }
+
+                if (range?.from && !document.getElementById('stats-from').value) {
+                    document.getElementById('stats-from').value = range.from;
+                }
+                if (range?.to && !document.getElementById('stats-to').value) {
+                    document.getElementById('stats-to').value = range.to;
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки статистики:', err);
+                showToast(t('server_error'));
+            }
         }
 
-        const topBox = document.getElementById('stats-top-dishes');
-        if (!topDishes.length) {
-            topBox.innerHTML = `<div style="color:var(--text-light)">${t('stats_no_orders')}</div>`;
-        } else {
-            topBox.innerHTML = topDishes.map(d => `
-                <div class="top-row">
-                    <span class="top-name">${d.dish_name}</span>
-                    <span class="top-value">${d.total_qty} шт • ${Number(d.total_revenue).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}</span>
+        function applyStatsFilter() {
+            const from = document.getElementById('stats-from').value;
+            const to = document.getElementById('stats-to').value;
+            if (!from || !to) { showToast(t('stats_select_dates')); return; }
+            if (from > to) { showToast(t('stats_invalid_range')); return; }
+            statsRange = { from, to };
+            loadStats();
+        }
+
+        function setPresetRange(preset) {
+            const today = new Date();
+            const toISO = (d) => d.toISOString().slice(0, 10);
+            let from = today, to = today;
+            if (preset === '7') from = new Date(today.getTime() - 6 * 86400000);
+            else if (preset === '30') from = new Date(today.getTime() - 29 * 86400000);
+            else if (preset === 'month') {
+                from = new Date(today.getFullYear(), today.getMonth(), 1);
+                to = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            }
+            document.getElementById('stats-from').value = toISO(from);
+            document.getElementById('stats-to').value = toISO(to);
+            applyStatsFilter();
+        }
+
+        async function exportStats(type) {
+            const token = sessionStorage.getItem('adminToken');
+            if (!token) return;
+            try {
+                const params = new URLSearchParams({ type });
+                if (statsRange.from) params.set('from', statsRange.from);
+                if (statsRange.to) params.set('to', statsRange.to);
+                const res = await fetch(`${API_BASE}/export-stats?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Export failed');
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `stats_${type}_${statsRange.from || 'all'}_${statsRange.to || 'all'}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast(t('export_done'));
+            } catch (err) {
+                console.error('Ошибка экспорта:', err);
+                showToast(t('server_error'));
+            }
+        }
+
+        // ===================================================================
+        // ==================== ВКЛАДКИ АДМИНКИ ====================
+        // ===================================================================
+        function initAdminTabs() {
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    const content = document.querySelector(`[data-tab-content="${target}"]`);
+                    if (content) content.classList.add('active');
+
+                    if (target === 'active') loadOrders('pending');
+                    else if (target === 'completed') loadOrders('completed');
+                });
+            });
+        }
+
+        // ===================================================================
+        // ==================== ЗАКАЗЫ ====================
+        // ===================================================================
+        async function loadOrders(status) {
+            const listId = status === 'pending' ? 'orders-active-list' : 'orders-completed-list';
+            const container = document.getElementById(listId);
+            if (!container) return;
+
+            container.innerHTML = `<div style="text-align:center;color:var(--text-light);padding:20px;">${t('loading')}</div>`;
+
+            try {
+                const token = sessionStorage.getItem('adminToken');
+                const res = await fetch(`${API_BASE}/get-orders?status=${status}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to load orders');
+
+                const { orders } = await res.json();
+                if (!orders || !orders.length) {
+                    container.innerHTML = `<div class="orders-empty">${status === 'pending' ? t('orders_no_active') : t('orders_no_completed')}</div>`;
+                    return;
+                }
+
+                container.innerHTML = orders.map(o => renderOrderCard(o, status)).join('');
+                bindOrderActions(container, status);
+            } catch (err) {
+                console.error('Ошибка загрузки заказов:', err);
+                container.innerHTML = `<div class="orders-empty">${t('server_error')}</div>`;
+            }
+        }
+
+        function renderOrderCard(order, status) {
+            const date = new Date(order.order_date).toLocaleString('es-MX');
+            const items = Array.isArray(order.items) ? order.items : [];
+            const itemsHtml = items.map(it => {
+                let meta = '';
+                if (it.sourceType === 'business') meta = `📅 ${it.date || ''}`;
+                else if (it.dayLabel || it.date) meta = `${it.dayLabel || ''} ${it.date || ''}`.trim();
+                return `<li>• ${it.name || ''} × ${it.qty || 0} — ${(it.price || 0) * (it.qty || 0)} ${CURRENCY_SYMBOL} ${meta ? ' (' + meta + ')' : ''}</li>`;
+            }).join('');
+
+            const actionHtml = status === 'pending'
+                ? `<div class="order-card-actions">
+                    <button class="btn btn-primary complete-order-btn" data-order-id="${order.id}">
+                    ✅ ${t('mark_completed')}
+                    </button>
+                </div>`
+                : `<div class="order-card-actions">
+                    <button class="btn btn-outline revert-order-btn" data-order-id="${order.id}">
+                    ↩️ ${t('return_to_active')}
+                    </button>
+                </div>`;
+
+            return `
+                <div class="order-card" data-order-id="${order.id}">
+                    <div class="order-card-header">
+                        <span class="order-card-number">№ ${order.order_number}</span>
+                        <span class="order-card-date">${date}</span>
+                    </div>
+                    <div class="order-card-user">👤 ${order.user_name || '—'}</div>
+                    <ul class="order-card-items">${itemsHtml}</ul>
+                    <div class="order-card-total">
+                        <span>${t('total')} (${order.items_count || 0} шт):</span>
+                        <span class="amount">${Number(order.total_amount || 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}</span>
+                    </div>
+                    ${actionHtml}
                 </div>
-            `).join('');
+            `;
         }
 
-        if (range?.from && !document.getElementById('stats-from').value) {
-            document.getElementById('stats-from').value = range.from;
+        function bindOrderActions(container, status) {
+            container.querySelectorAll('.complete-order-btn').forEach(btn => {
+                btn.addEventListener('click', () => changeOrderStatus(btn.dataset.orderId, 'completed', status));
+            });
+            container.querySelectorAll('.revert-order-btn').forEach(btn => {
+                btn.addEventListener('click', () => changeOrderStatus(btn.dataset.orderId, 'pending', status));
+            });
         }
-        if (range?.to && !document.getElementById('stats-to').value) {
-            document.getElementById('stats-to').value = range.to;
+
+        async function changeOrderStatus(orderId, newStatus, currentTabStatus) {
+            try {
+                const token = sessionStorage.getItem('adminToken');
+                const res = await fetch(`${API_BASE}/complete-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ id: orderId, status: newStatus })
+                });
+                if (!res.ok) throw new Error('Failed to update');
+
+                showToast(newStatus === 'completed' ? t('order_completed_msg') : t('order_returned_msg'));
+                loadOrders(currentTabStatus);
+            } catch (err) {
+                console.error(err);
+                showToast(t('server_error'));
+            }
         }
-    } catch (err) {
-        console.error('Ошибка загрузки статистики:', err);
-        showToast(t('server_error'));
-    }
-}
-
-function applyStatsFilter() {
-    const from = document.getElementById('stats-from').value;
-    const to = document.getElementById('stats-to').value;
-    if (!from || !to) { showToast(t('stats_select_dates')); return; }
-    if (from > to) { showToast(t('stats_invalid_range')); return; }
-    statsRange = { from, to };
-    loadStats();
-}
-
-function setPresetRange(preset) {
-    const today = new Date();
-    const toISO = (d) => d.toISOString().slice(0, 10);
-    let from = today, to = today;
-    if (preset === '7') from = new Date(today.getTime() - 6 * 86400000);
-    else if (preset === '30') from = new Date(today.getTime() - 29 * 86400000);
-    else if (preset === 'month') {
-        from = new Date(today.getFullYear(), today.getMonth(), 1);
-        to = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    }
-    document.getElementById('stats-from').value = toISO(from);
-    document.getElementById('stats-to').value = toISO(to);
-    applyStatsFilter();
-}
-
-async function exportStats(type) {
-    const token = sessionStorage.getItem('adminToken');
-    if (!token) return;
-    try {
-        const params = new URLSearchParams({ type });
-        if (statsRange.from) params.set('from', statsRange.from);
-        if (statsRange.to) params.set('to', statsRange.to);
-        const res = await fetch(`${API_BASE}/export-stats?${params.toString()}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Export failed');
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `stats_${type}_${statsRange.from || 'all'}_${statsRange.to || 'all'}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast(t('export_done'));
-    } catch (err) {
-        console.error('Ошибка экспорта:', err);
-        showToast(t('server_error'));
-    }
-}
 
         // ===================================================================
         // ==================== DAY SELECTOR ====================
@@ -1646,6 +1859,7 @@ async function exportStats(type) {
             renderAdminDatesTable();
             renderAdminDishList();
             loadStats();
+            loadOrders('pending');
             showScreen('admin');
         }
 
@@ -1909,36 +2123,39 @@ async function exportStats(type) {
         // ==================== INIT ====================
         // ===================================================================
         async function init() {
-    applyTheme();
-    await loadMenuFromServer();
-    applyTranslations();
-    renderDaySelector();
-    renderMenu();
-    renderBusinessMenu();
-    updateCartBadge();
-    setupImageUpload();
-    initLanguageSelectors();
+            applyTheme();
+            await loadMenuFromServer();
+            applyTranslations();
+            renderDaySelector();
+            renderMenu();
+            renderBusinessMenu();
+            updateCartBadge();
+            setupImageUpload();
+            initLanguageSelectors();
+            initAdminTabs();
+            document.getElementById('refresh-active-orders')?.addEventListener('click', () => loadOrders('pending'));
+            document.getElementById('refresh-completed-orders')?.addEventListener('click', () => loadOrders('completed'));  
 
-    // ===== Статистика =====
-    document.getElementById('stats-apply')?.addEventListener('click', applyStatsFilter);
-    document.querySelectorAll('[data-range]').forEach(btn => {
-        btn.addEventListener('click', () => setPresetRange(btn.dataset.range));
-    });
-    document.getElementById('export-orders')?.addEventListener('click', () => exportStats('orders'));
-    document.getElementById('export-dishes')?.addEventListener('click', () => exportStats('dishes'));
-    document.getElementById('export-daily')?.addEventListener('click', () => exportStats('daily'));
+            // ===== Статистика =====
+            document.getElementById('stats-apply')?.addEventListener('click', applyStatsFilter);
+            document.querySelectorAll('[data-range]').forEach(btn => {
+                btn.addEventListener('click', () => setPresetRange(btn.dataset.range));
+            });
+            document.getElementById('export-orders')?.addEventListener('click', () => exportStats('orders'));
+            document.getElementById('export-dishes')?.addEventListener('click', () => exportStats('dishes'));
+            document.getElementById('export-daily')?.addEventListener('click', () => exportStats('daily'));
 
-    // Значения по умолчанию — последние 30 дней
-    (function initStatsDefaults() {
-        const today = new Date();
-        const monthAgo = new Date(today.getTime() - 29 * 86400000);
-        const toISO = (d) => d.toISOString().slice(0, 10);
-        const fromEl = document.getElementById('stats-from');
-        const toEl = document.getElementById('stats-to');
-        if (fromEl) fromEl.value = toISO(monthAgo);
-        if (toEl) toEl.value = toISO(today);
-        statsRange = { from: toISO(monthAgo), to: toISO(today) };
-    })();
+            // Значения по умолчанию — последние 30 дней
+            (function initStatsDefaults() {
+                const today = new Date();
+                const monthAgo = new Date(today.getTime() - 29 * 86400000);
+                const toISO = (d) => d.toISOString().slice(0, 10);
+                const fromEl = document.getElementById('stats-from');
+                const toEl = document.getElementById('stats-to');
+                if (fromEl) fromEl.value = toISO(monthAgo);
+                if (toEl) toEl.value = toISO(today);
+                statsRange = { from: toISO(monthAgo), to: toISO(today) };
+            })();
 }
 
         function initLanguageSelectors() {
