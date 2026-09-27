@@ -405,6 +405,57 @@
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+        .stats-section { margin-bottom: 24px; }
+.stats-filter {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-items: flex-end; margin-bottom: 16px;
+    padding: 14px; background: var(--input-bg);
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+}
+.stats-filter-group { display: flex; flex-direction: column; gap: 4px; }
+.stats-filter-group label { font-size: 12px; font-weight: 600; color: var(--text-light); }
+.stats-filter-group .form-input { padding: 8px 10px; font-size: 13px; }
+.stats-filter-presets { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+.stats-card {
+    background: var(--input-bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    transition: var(--transition);
+}
+.stats-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(232,106,51,0.15); }
+.stats-label { font-size: 12px; color: var(--text-light); margin-bottom: 6px; font-weight: 500; }
+.stats-value { font-size: 22px; font-weight: 800; color: var(--primary); }
+
+.stats-totals {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    margin-top: 14px; padding: 10px 14px;
+    background: var(--input-bg); border-radius: var(--radius-sm);
+    font-size: 14px;
+}
+.stats-totals strong { color: var(--primary); font-weight: 800; }
+
+.stats-export {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    margin-top: 14px; font-size: 14px; color: var(--text-light);
+}
+
+.stats-top-list {
+    background: var(--input-bg); border-radius: var(--radius-sm);
+    padding: 12px 16px; font-size: 14px;
+}
+.stats-top-list .top-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px dashed var(--border);
+}
+.stats-top-list .top-row:last-child { border-bottom: none; }
+.stats-top-list .top-name { font-weight: 600; }
+.stats-top-list .top-value { color: var(--primary); font-weight: 700; }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
             .welcome-container, .admin-card { padding: 28px 20px; }
@@ -530,7 +581,53 @@
         <main class="admin-panel-container">
             <div class="admin-card">
                 <h2 class="admin-title" data-i18n="admin_title">⚙️ Панель администратора</h2>
+<div class="stats-section">
+    <h3 style="margin-bottom:12px;" data-i18n="stats_title">📊 Статистика заказов</h3>
 
+    <div class="stats-filter">
+        <div class="stats-filter-group">
+            <label data-i18n="stats_from">С</label>
+            <input type="date" id="stats-from" class="form-input">
+        </div>
+        <div class="stats-filter-group">
+            <label data-i18n="stats_to">По</label>
+            <input type="date" id="stats-to" class="form-input">
+        </div>
+        <div class="stats-filter-presets">
+            <button type="button" class="btn btn-sm btn-secondary" data-range="today" data-i18n="stats_today">Сегодня</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-range="7" data-i18n="stats_7d">7 дней</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-range="30" data-i18n="stats_30d">30 дней</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-range="month" data-i18n="stats_month">Этот месяц</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary" id="stats-apply" data-i18n="stats_apply">Применить</button>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stats-card"><div class="stats-label" data-i18n="stats_orders">Заказов</div><div class="stats-value" id="stat-orders">—</div></div>
+        <div class="stats-card"><div class="stats-label" data-i18n="stats_revenue">Выручка</div><div class="stats-value" id="stat-revenue">—</div></div>
+        <div class="stats-card"><div class="stats-label" data-i18n="stats_avg">Средний чек</div><div class="stats-value" id="stat-avg">—</div></div>
+        <div class="stats-card"><div class="stats-label" data-i18n="stats_users">Уникальных клиентов</div><div class="stats-value" id="stat-users">—</div></div>
+    </div>
+
+    <div class="stats-totals">
+        <div data-i18n="stats_total_orders">Всего заказов:</div>
+        <strong id="stat-total-orders">—</strong>
+        <div data-i18n="stats_total_revenue">Всего выручка:</div>
+        <strong id="stat-total-revenue">—</strong>
+    </div>
+
+    <div class="stats-export">
+        <span data-i18n="stats_export_label">Экспорт:</span>
+        <button type="button" class="btn btn-sm btn-outline" id="export-orders" data-i18n="export_orders">Заказы (CSV)</button>
+        <button type="button" class="btn btn-sm btn-outline" id="export-dishes" data-i18n="export_dishes">Блюда (CSV)</button>
+        <button type="button" class="btn btn-sm btn-outline" id="export-daily" data-i18n="export_daily">По дням (CSV)</button>
+    </div>
+
+    <h4 style="margin:20px 0 10px;" data-i18n="stats_top_dishes">Топ блюд</h4>
+    <div id="stats-top-dishes" class="stats-top-list"></div>
+
+    <hr style="border-color: var(--border); margin: 20px 0;">
+</div>
                 <h3 style="margin-bottom:12px;" data-i18n="dates_title">Даты для дней недели</h3>
                 <table class="admin-dates-table" id="admin-dates-table">
                     <thead>
@@ -784,6 +881,20 @@
                 fill_required: '⚠️ Заполните все обязательные поля',
                 loading: 'Загрузка...',
                 server_error: 'Ошибка сервера',
+                stats_title: '📊 Статистика заказов',
+                stats_from: 'С', stats_to: 'По',
+                stats_today: 'Сегодня', stats_7d: '7 дней', stats_30d: '30 дней',
+                stats_month: 'Этот месяц', stats_apply: 'Применить',
+                stats_orders: 'Заказов', stats_revenue: 'Выручка',
+                stats_avg: 'Средний чек', stats_users: 'Уникальных клиентов',
+                stats_total_orders: 'Всего заказов:', stats_total_revenue: 'Всего выручка:',
+                stats_export_label: 'Экспорт:',
+                export_orders: 'Заказы (CSV)', export_dishes: 'Блюда (CSV)', export_daily: 'По дням (CSV)',
+                export_done: '✅ Файл скачан',
+                stats_select_dates: '⚠️ Выберите обе даты',
+                stats_invalid_range: '⚠️ Неверный диапазон',
+                stats_no_orders: 'Пока нет заказов за период',
+                stats_top_dishes: 'Топ блюд',
             },
             es: {
                 welcome_title: '¡Bienvenido!',
@@ -857,6 +968,20 @@
                 fill_required: '⚠️ Complete todos los campos obligatorios',
                 loading: 'Cargando...',
                 server_error: 'Error del servidor',
+                stats_title: '📊 Estadísticas de pedidos',
+                stats_from: 'Desde', stats_to: 'Hasta',
+                stats_today: 'Hoy', stats_7d: '7 días', stats_30d: '30 días',
+                stats_month: 'Este mes', stats_apply: 'Aplicar',
+                stats_orders: 'Pedidos', stats_revenue: 'Ingresos',
+                stats_avg: 'Ticket promedio', stats_users: 'Clientes únicos',
+                stats_total_orders: 'Pedidos totales:', stats_total_revenue: 'Ingresos totales:',
+                stats_export_label: 'Exportar:',
+                export_orders: 'Pedidos (CSV)', export_dishes: 'Platos (CSV)', export_daily: 'Por día (CSV)',
+                export_done: '✅ Archivo descargado',
+                stats_select_dates: '⚠️ Seleccione ambas fechas',
+                stats_invalid_range: '⚠️ Rango inválido',
+                stats_no_orders: 'Aún no hay pedidos en el período',
+                stats_top_dishes: 'Platos más pedidos',
             }
         };
 
@@ -1065,6 +1190,115 @@
                 return null;
             }
         }
+
+        // ===================================================================
+// ==================== СТАТИСТИКА ====================
+// ===================================================================
+let statsRange = { from: null, to: null };
+
+async function loadStats() {
+    const token = sessionStorage.getItem('adminToken');
+    if (!token) return;
+
+    try {
+        const params = new URLSearchParams();
+        if (statsRange.from) params.set('from', statsRange.from);
+        if (statsRange.to) params.set('to', statsRange.to);
+
+        const res = await fetch(`${API_BASE}/get-stats?${params.toString()}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Stats fetch failed');
+
+        const { summary, topDishes, totals, range } = await res.json();
+
+        document.getElementById('stat-orders').textContent = summary.orders_count ?? 0;
+        document.getElementById('stat-revenue').textContent =
+            `${Number(summary.revenue ?? 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}`;
+        document.getElementById('stat-avg').textContent =
+            `${Number(summary.avg_order ?? 0).toFixed(2)} ${CURRENCY_SYMBOL}`;
+        document.getElementById('stat-users').textContent = summary.unique_users ?? 0;
+
+        if (totals) {
+            document.getElementById('stat-total-orders').textContent = totals.orders_total ?? 0;
+            document.getElementById('stat-total-revenue').textContent =
+                `${Number(totals.revenue_total ?? 0).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}`;
+        }
+
+        const topBox = document.getElementById('stats-top-dishes');
+        if (!topDishes.length) {
+            topBox.innerHTML = `<div style="color:var(--text-light)">${t('stats_no_orders')}</div>`;
+        } else {
+            topBox.innerHTML = topDishes.map(d => `
+                <div class="top-row">
+                    <span class="top-name">${d.dish_name}</span>
+                    <span class="top-value">${d.total_qty} шт • ${Number(d.total_revenue).toLocaleString('es-MX')} ${CURRENCY_SYMBOL}</span>
+                </div>
+            `).join('');
+        }
+
+        if (range?.from && !document.getElementById('stats-from').value) {
+            document.getElementById('stats-from').value = range.from;
+        }
+        if (range?.to && !document.getElementById('stats-to').value) {
+            document.getElementById('stats-to').value = range.to;
+        }
+    } catch (err) {
+        console.error('Ошибка загрузки статистики:', err);
+        showToast(t('server_error'));
+    }
+}
+
+function applyStatsFilter() {
+    const from = document.getElementById('stats-from').value;
+    const to = document.getElementById('stats-to').value;
+    if (!from || !to) { showToast(t('stats_select_dates')); return; }
+    if (from > to) { showToast(t('stats_invalid_range')); return; }
+    statsRange = { from, to };
+    loadStats();
+}
+
+function setPresetRange(preset) {
+    const today = new Date();
+    const toISO = (d) => d.toISOString().slice(0, 10);
+    let from = today, to = today;
+    if (preset === '7') from = new Date(today.getTime() - 6 * 86400000);
+    else if (preset === '30') from = new Date(today.getTime() - 29 * 86400000);
+    else if (preset === 'month') {
+        from = new Date(today.getFullYear(), today.getMonth(), 1);
+        to = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    }
+    document.getElementById('stats-from').value = toISO(from);
+    document.getElementById('stats-to').value = toISO(to);
+    applyStatsFilter();
+}
+
+async function exportStats(type) {
+    const token = sessionStorage.getItem('adminToken');
+    if (!token) return;
+    try {
+        const params = new URLSearchParams({ type });
+        if (statsRange.from) params.set('from', statsRange.from);
+        if (statsRange.to) params.set('to', statsRange.to);
+        const res = await fetch(`${API_BASE}/export-stats?${params.toString()}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Export failed');
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `stats_${type}_${statsRange.from || 'all'}_${statsRange.to || 'all'}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(t('export_done'));
+    } catch (err) {
+        console.error('Ошибка экспорта:', err);
+        showToast(t('server_error'));
+    }
+}
 
         // ===================================================================
         // ==================== DAY SELECTOR ====================
@@ -1384,6 +1618,7 @@
         function openAdminPanel() {
             renderAdminDatesTable();
             renderAdminDishList();
+            loadStats();
             showScreen('admin');
         }
 
@@ -1506,25 +1741,50 @@
             const clearBtn = $('#admin-image-clear');
             const urlInput = $('#admin-image');
 
-            fileInput.addEventListener('change', (e) => {
+            fileInput.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        state.uploadedImageData = event.target.result;
-                        preview.src = event.target.result;
-                        preview.style.display = 'block';
-                        clearBtn.style.display = 'inline-block';
-                        urlInput.value = '';
-                        urlInput.disabled = true;
-                    };
-                    reader.readAsDataURL(file);
+                if (!file) return;
+
+                if (file.size > 3 * 1024 * 1024) {
+                    showToast('⚠️ Файл больше 3 МБ');
+                    fileInput.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    preview.src = ev.target.result;
+                    preview.style.display = 'block';
+                    clearBtn.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+
+                try {
+                    showToast('📤 Загрузка...');
+                    const compressed = await compressImage(file, 1000, 0.82);
+                    const token = sessionStorage.getItem('adminToken');
+                    const res = await fetch(`${API_BASE}/upload-image`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ filename: file.name, base64: compressed })
+                    });
+                    if (!res.ok) throw new Error('Upload failed');
+                    const { publicUrl } = await res.json();
+
+                    urlInput.value = publicUrl;
+                    urlInput.disabled = true;
+                    showToast('✅ Изображение загружено');
+                } catch (err) {
+                    console.error(err);
+                    showToast('⚠️ Ошибка загрузки');
                 }
             });
 
             clearBtn.addEventListener('click', () => {
                 fileInput.value = '';
-                state.uploadedImageData = null;
                 preview.style.display = 'none';
                 clearBtn.style.display = 'none';
                 urlInput.disabled = false;
@@ -1534,11 +1794,31 @@
             urlInput.addEventListener('input', () => {
                 if (urlInput.value.trim() !== '') {
                     fileInput.value = '';
-                    state.uploadedImageData = null;
                     preview.style.display = 'none';
                     clearBtn.style.display = 'none';
                     urlInput.disabled = false;
                 }
+            });
+        }
+
+        function compressImage(file, maxWidth = 1000, quality = 0.82) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                const reader = new FileReader();
+                reader.onload = (e) => { img.src = e.target.result; };
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ratio = Math.min(maxWidth / img.width, maxWidth / img.height, 1);
+                    canvas.width = img.width * ratio;
+                    canvas.height = img.height * ratio;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob((blob) => {
+                        const r = new FileReader();
+                        r.onload = () => resolve(r.result);
+                        r.readAsDataURL(blob);
+                    }, 'image/jpeg', quality);
+                };
+                reader.readAsDataURL(file);
             });
         }
 
@@ -1602,16 +1882,37 @@
         // ==================== INIT ====================
         // ===================================================================
         async function init() {
-            applyTheme();
-            applyTranslations();
-            await loadMenuFromServer();
-            renderDaySelector();
-            renderMenu();
-            renderBusinessMenu();
-            updateCartBadge();
-            setupImageUpload();
-            initLanguageSelectors();
-        }
+    applyTheme();
+    await loadMenuFromServer();
+    applyTranslations();
+    renderDaySelector();
+    renderMenu();
+    renderBusinessMenu();
+    updateCartBadge();
+    setupImageUpload();
+    initLanguageSelectors();
+
+    // ===== Статистика =====
+    document.getElementById('stats-apply')?.addEventListener('click', applyStatsFilter);
+    document.querySelectorAll('[data-range]').forEach(btn => {
+        btn.addEventListener('click', () => setPresetRange(btn.dataset.range));
+    });
+    document.getElementById('export-orders')?.addEventListener('click', () => exportStats('orders'));
+    document.getElementById('export-dishes')?.addEventListener('click', () => exportStats('dishes'));
+    document.getElementById('export-daily')?.addEventListener('click', () => exportStats('daily'));
+
+    // Значения по умолчанию — последние 30 дней
+    (function initStatsDefaults() {
+        const today = new Date();
+        const monthAgo = new Date(today.getTime() - 29 * 86400000);
+        const toISO = (d) => d.toISOString().slice(0, 10);
+        const fromEl = document.getElementById('stats-from');
+        const toEl = document.getElementById('stats-to');
+        if (fromEl) fromEl.value = toISO(monthAgo);
+        if (toEl) toEl.value = toISO(today);
+        statsRange = { from: toISO(monthAgo), to: toISO(today) };
+    })();
+}
 
         function initLanguageSelectors() {
             ['language-select', 'header-lang-select', 'admin-login-lang-select',
